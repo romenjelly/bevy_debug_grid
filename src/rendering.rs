@@ -80,7 +80,11 @@ impl AsBindGroupShaderType<ClippedLineMaterialUniform> for ClippedLineMaterial {
 
 impl Material for ClippedLineMaterial {
     fn fragment_shader() -> ShaderRef {
-        "shaders/clipped_line_material.wgsl".into()
+        concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/assets/shaders/",
+            "clipped_line_material.wgsl",
+        ).into()
     }
 
     fn specialize(
@@ -112,7 +116,11 @@ impl SimpleLineMaterial {
 
 impl Material for SimpleLineMaterial {
     fn fragment_shader() -> ShaderRef {
-        "shaders/simple_line_material.wgsl".into()
+        concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/assets/shaders/",
+            "simple_line_material.wgsl",
+        ).into()
     }
 
     fn specialize(
