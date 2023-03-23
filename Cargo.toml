@@ -6,7 +6,10 @@ repository = "https://github.com/romenjelly/bevy_debug_grid"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 keywords = ["bevy"]
-exclude = ["/examples/"]
+exclude = [
+    "/examples/",
+    "/assets/",
+]
 
 [dependencies]
 bevy = { version = "0.10", default-features = false, features = [
