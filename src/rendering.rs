@@ -12,6 +12,10 @@ use bevy::{
     },
 };
 
+/// Handle for the clipped line shader
+pub const CLIPPED_LINE_SHADER_HANDLE: HandleUntyped =
+    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, 14735426461149675473);
+
 use crate::{GridAlignment, GridAxis};
 
 /// Material used for tracked grids.
@@ -80,11 +84,7 @@ impl AsBindGroupShaderType<ClippedLineMaterialUniform> for ClippedLineMaterial {
 
 impl Material for ClippedLineMaterial {
     fn fragment_shader() -> ShaderRef {
-        concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/assets/shaders/",
-            "clipped_line_material.wgsl",
-        ).into()
+        CLIPPED_LINE_SHADER_HANDLE.typed().into()
     }
 
     fn specialize(
@@ -97,6 +97,10 @@ impl Material for ClippedLineMaterial {
         Ok(())
     }
 }
+
+/// Handle for the simple line shader
+pub const SIMPLE_LINE_SHADER_HANDLE: HandleUntyped =
+    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, 14181856097290587572);
 
 /// Simple line material with no functionality beyond assigning a color
 #[derive(Default, AsBindGroup, TypeUuid, Debug, Clone)]
@@ -116,11 +120,7 @@ impl SimpleLineMaterial {
 
 impl Material for SimpleLineMaterial {
     fn fragment_shader() -> ShaderRef {
-        concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/assets/shaders/",
-            "simple_line_material.wgsl",
-        ).into()
+        SIMPLE_LINE_SHADER_HANDLE.typed().into()
     }
 
     fn specialize(

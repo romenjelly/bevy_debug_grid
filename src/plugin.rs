@@ -1,4 +1,4 @@
-use bevy::prelude::{Plugin, MaterialPlugin};
+use bevy::{prelude::{Plugin, MaterialPlugin}, asset::load_internal_asset};
 
 use crate::*;
 
@@ -50,6 +50,19 @@ impl Default for DebugGridPlugin {
 
 impl Plugin for DebugGridPlugin {
     fn build(&self, app: &mut bevy::prelude::App) {
+        load_internal_asset!(
+            app,
+            CLIPPED_LINE_SHADER_HANDLE,
+            "shaders/clipped_line.wgsl",
+            Shader::from_wgsl
+        );
+        load_internal_asset!(
+            app,
+            SIMPLE_LINE_SHADER_HANDLE,
+            "shaders/simple_line.wgsl",
+            Shader::from_wgsl
+        );
+
         app
             .add_plugin(MaterialPlugin::<SimpleLineMaterial>::default())
             .add_plugin(MaterialPlugin::<ClippedLineMaterial>::default())
