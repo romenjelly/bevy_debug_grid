@@ -35,15 +35,18 @@ fn spawn_camera(
 
 fn spawn_center_sphere(
     mut commands: Commands,
-    mut assets: ResMut<Assets<Mesh>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     commands.spawn(PbrBundle {
-        mesh: assets.add(shape::Icosphere::default().try_into().expect("Unable to mesh default icosphere")),
+        mesh: meshes.add(shape::Icosphere::default().try_into().expect("Unable to mesh default icosphere")),
+        material: materials.add(Color::WHITE.into()),
         ..default()
     });
 }
 
 fn spawn_floor_grid(mut commands: Commands) {
+    // Floor grid
     commands.spawn((
         Grid {
             spacing: 5.0_f32,
@@ -62,6 +65,12 @@ fn spawn_floor_grid(mut commands: Commands) {
         TransformBundle::default(),
         VisibilityBundle::default(),
     ));
+
+    // Point light
+    commands.spawn(PointLightBundle {
+        transform: Transform::from_xyz(4.0_f32, 4.0_f32, 4.0_f32),
+        ..default()
+    });
 }
 
 fn move_floor_grid(

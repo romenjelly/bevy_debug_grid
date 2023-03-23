@@ -34,7 +34,8 @@ struct Spinning;
 
 fn spawn_demonstration_objects(
     mut commands: Commands,
-    mut assets: ResMut<Assets<Mesh>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     let spacing_offset = f32::consts::TAU;
     let height_offset = f32::consts::FRAC_PI_2;
@@ -43,7 +44,8 @@ fn spawn_demonstration_objects(
     // Moving mesh, red
     commands.spawn((
         PbrBundle {
-            mesh: assets.add(shape::Cube::default().into()),
+            mesh: meshes.add(shape::Cube::default().into()),
+            material: materials.add(Color::WHITE.into()),
             ..default()
         },
         Moving {
@@ -57,7 +59,8 @@ fn spawn_demonstration_objects(
     // Spinning mesh, green
     commands.spawn((
         PbrBundle {
-            mesh: assets.add(shape::Capsule::default().into()),
+            mesh: meshes.add(shape::Capsule::default().into()),
+            material: materials.add(Color::WHITE.into()),
             transform: Transform::from_xyz(0.0_f32, height_offset, -depth_offset),
             ..default()
         },
@@ -70,7 +73,8 @@ fn spawn_demonstration_objects(
     // Moving and spinning mesh, blue
     commands.spawn((
         PbrBundle {
-            mesh: assets.add(shape::Torus::default().into()),
+            mesh: meshes.add(shape::Torus::default().into()),
+            material: materials.add(Color::WHITE.into()),
             ..default()
         },
         Grid {
@@ -84,7 +88,8 @@ fn spawn_demonstration_objects(
     ));
     // Moving grid, cyan
     commands.spawn(PbrBundle {
-        mesh: assets.add(shape::Cube::default().into()),
+        mesh: meshes.add(shape::Cube::default().into()),
+        material: materials.add(Color::WHITE.into()),
         transform: Transform::from_xyz(-spacing_offset, height_offset, depth_offset),
         ..default()
     }).with_children(|child| {
@@ -100,7 +105,8 @@ fn spawn_demonstration_objects(
     });
     // Spinning grid, magenta
     commands.spawn(PbrBundle {
-        mesh: assets.add(shape::Capsule::default().into()),
+        mesh: meshes.add(shape::Capsule::default().into()),
+        material: materials.add(Color::WHITE.into()),
         transform: Transform::from_xyz(0.0_f32, height_offset, depth_offset),
         ..default()
     }).with_children(|child| {
@@ -116,7 +122,8 @@ fn spawn_demonstration_objects(
     });
     // Moving and spinning grid, yellow
     commands.spawn(PbrBundle {
-        mesh: assets.add(shape::Torus::default().into()),
+        mesh: meshes.add(shape::Torus::default().into()),
+        material: materials.add(Color::WHITE.into()),
         transform: Transform::from_xyz(spacing_offset, height_offset, depth_offset),
         ..default()
     }).with_children(|child| {
@@ -130,6 +137,12 @@ fn spawn_demonstration_objects(
             Moving { origin: Vec3::ZERO },
             Spinning,
         ));
+    });
+
+    // Point light
+    commands.spawn(PointLightBundle {
+        transform: Transform::from_xyz(4.0_f32, 4.0_f32, 4.0_f32),
+        ..default()
     });
 }
 
