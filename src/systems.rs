@@ -6,6 +6,12 @@ use bevy::utils::HashMap;
 
 use crate::*;
 
+/// Offset on the vertical axis for a sub-grid.
+/// Purely used to avoid Z-fighting.
+/// The mesh is offset by it, and the mesh's transform is offset by it as well.
+/// Can be any reasonable float value.
+const SUB_GRID_VERTICAL_OFFSET: f32 = -0.001_f32;
+
 /// Utility function to despawn children of a certain type.
 /// Used with marker components.
 fn despawn_children_of_type<T: Component>(
@@ -25,20 +31,20 @@ fn despawn_children_of_type<T: Component>(
 }
 
 /// Creates vertices for a line based on the line's size and its offset
-fn line_vertices(size: f32, offset: f32) -> [Vec3; 8] {
+fn line_vertices(size: f32, horizontal_offset: f32, vertical_offset: f32) -> [Vec3; 8] {
     [
         // +X line
-        Vec3::new(offset, 0.0_f32, size),
-        Vec3::new(offset, 0.0_f32, -size),
+        Vec3::new(horizontal_offset, vertical_offset, size),
+        Vec3::new(horizontal_offset, vertical_offset, -size),
         // -X line
-        Vec3::new(-offset, 0.0_f32, size),
-        Vec3::new(-offset, 0.0_f32, -size),
+        Vec3::new(-horizontal_offset, vertical_offset, size),
+        Vec3::new(-horizontal_offset, vertical_offset, -size),
         // +Z line
-        Vec3::new(size, 0.0_f32, offset),
-        Vec3::new(-size, 0.0_f32, offset),
+        Vec3::new(size, vertical_offset, horizontal_offset),
+        Vec3::new(-size, vertical_offset, horizontal_offset),
         // -Z line
-        Vec3::new(size, 0.0_f32, -offset),
-        Vec3::new(-size, 0.0_f32, -offset),
+        Vec3::new(size, vertical_offset, -horizontal_offset),
+        Vec3::new(-size, vertical_offset, -horizontal_offset),
     ]
 }
 
@@ -47,7 +53,7 @@ fn main_grid_vertices_and_size(grid: &Grid, alignment: &GridAlignment) -> (Vec<V
     let size = grid.count as f32 * grid.spacing;
     let vertices = (0..grid.count)
         .map(|offset| (offset + 1) as f32 * grid.spacing)
-        .flat_map(|offset| line_vertices(size, offset))
+        .flat_map(|offset| line_vertices(size, offset, 0.0_f32))
         .map(|vertex| alignment.shift_vec3(vertex))
         .collect::<Vec<_>>();
     (vertices, size)
@@ -78,7 +84,10 @@ pub fn main_grid_mesher_untracked(
                 meshes.add(mesh),
                 TransformBundle::default(),
                 VisibilityBundle::default(),
-                simple_materials.add(SimpleLineMaterial::new(grid.color)),
+                simple_materials.add(SimpleLineMaterial::new(
+                    grid.color,
+                    grid.alpha_mode,
+                )),
             ));
         });
     }
@@ -114,6 +123,7 @@ pub fn main_grid_mesher_tracked(
                 VisibilityBundle::default(),
                 clipped_materials.add(ClippedLineMaterial::new(
                     grid.color,
+                    grid.alpha_mode,
                     tracked.alignment,
                     size - grid.spacing,
                     tracked.offset,
@@ -131,6 +141,7 @@ pub fn main_grid_mesher_tracked(
                     VisibilityBundle::default(),
                     clipped_materials.add(ClippedLineMaterial::new(
                         color,
+                        grid.alpha_mode,
                         tracked.alignment,
                         size - grid.spacing,
                         tracked.offset,
@@ -164,7 +175,7 @@ pub fn sub_grid_mesher(
             .map(|(offset, sub_offset)| {
                 offset as f32 * grid.spacing + sub_spacing + sub_offset as f32 * sub_spacing
             })
-            .flat_map(|offset| line_vertices(size, offset))
+            .flat_map(|offset| line_vertices(size, offset, SUB_GRID_VERTICAL_OFFSET))
             .map(|vertex| alignment.shift_vec3(vertex))
             .collect::<Vec<_>>();
         let mut mesh = Mesh::new(PrimitiveTopology::LineList);
@@ -177,19 +188,25 @@ pub fn sub_grid_mesher(
             let mut child_commands = children.spawn((
                 SubGridChild,
                 meshes.add(mesh),
-                TransformBundle::default(),
+                TransformBundle::from_transform(Transform::from_translation(
+                    alignment.shift_vec3(-Vec3::Y * SUB_GRID_VERTICAL_OFFSET),
+                )),
                 VisibilityBundle::default(),
             ));
             if let Some(tracked) = tracked {
                 child_commands.insert(clipped_materials.add(ClippedLineMaterial::new(
                     sub_grid.color,
+                    grid.alpha_mode,
                     tracked.alignment,
                     size - grid.spacing,
                     tracked.offset,
                     None,
                 )));
             } else {
-                child_commands.insert(simple_materials.add(SimpleLineMaterial::new(sub_grid.color)));
+                child_commands.insert(simple_materials.add(SimpleLineMaterial::new(
+                    sub_grid.color,
+                    grid.alpha_mode,
+                )));
             }
         });
     }
@@ -225,7 +242,10 @@ pub fn grid_axis_mesher(
                         meshes.add(mesh),
                         TransformBundle::default(),
                         VisibilityBundle::default(),
-                        simple_materials.add(SimpleLineMaterial::new(color)),
+                        simple_materials.add(SimpleLineMaterial::new(
+                            color,
+                            grid.alpha_mode,
+                        )),
                     ));
                 }
             } else {
@@ -244,7 +264,10 @@ pub fn grid_axis_mesher(
                     meshes.add(mesh),
                     TransformBundle::default(),
                     VisibilityBundle::default(),
-                    simple_materials.add(SimpleLineMaterial::new(grid.color)),
+                    simple_materials.add(SimpleLineMaterial::new(
+                        grid.color,
+                        grid.alpha_mode,
+                    )),
                 ));
             }
         });

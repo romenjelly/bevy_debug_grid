@@ -8,6 +8,8 @@ pub use plugin::*;
 pub use rendering::*;
 pub use systems::*;
 
+pub const DEFAULT_GRID_ALPHA: f32 = 0.5_f32;
+
 /// The main grid component
 #[derive(Component, Clone, Debug)]
 pub struct Grid {
@@ -17,6 +19,8 @@ pub struct Grid {
     pub count: usize,
     /// Line color
     pub color: Color,
+    /// Alpha mode
+    pub alpha_mode: AlphaMode,
 }
 
 impl Default for Grid {
@@ -25,6 +29,7 @@ impl Default for Grid {
             spacing: 0.25_f32,
             count: 8,
             color: Color::SILVER,
+            alpha_mode: AlphaMode::Blend,
         }
     }
 }
@@ -91,8 +96,11 @@ impl From<GridAlignment> for Vec3 {
 /// Spawn it next to a grid for it to have effect.
 #[derive(Component, Clone, Debug)]
 pub struct GridAxis {
+    /// Color of the X axis
     pub x: Option<Color>,
+    /// Color of the Y axis
     pub y: Option<Color>,
+    /// Color of the Z axis
     pub z: Option<Color>,
 }
 

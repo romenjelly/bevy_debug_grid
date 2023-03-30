@@ -8,11 +8,12 @@ pub fn spawn_floor_grid(mut commands: Commands) {
         Grid {
             spacing: 10.0_f32,
             count: 16,
-            color: Color::SILVER,
+            color: Color::SILVER.with_a(DEFAULT_GRID_ALPHA),
+            alpha_mode: AlphaMode::Blend,
         },
         SubGrid {
             count: 9,
-            color: Color::GRAY,
+            color: Color::GRAY.with_a(DEFAULT_GRID_ALPHA),
         },
         GridAxis::new_rgb(),
         TrackedGrid::default(),

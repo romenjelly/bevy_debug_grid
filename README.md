@@ -77,6 +77,8 @@ commands.spawn((
         count: 8,
         // Color of the lines
         color: Color::SILVER,
+        // Alpha mode for all components
+        alpha_mode: AlphaMode::Opaque,
     },
     TransformBundle::default(),
     VisibilityBundle::default(),
@@ -84,6 +86,10 @@ commands.spawn((
 ```
 
 The `Grid::default()` is a small silver grid with 8 lines per axis and a spacing of `0.25_f32` between them.
+
+Grids have an `alpha_mode`, which determines the alpha mode for the grid material, as well as all other related materials, such as sub-grids, and grid axis.  
+The `color` should have an alpha value for alpha modes outside of `AlphaMode::Opaque` to make sense.  
+The default alpha mode for grids is `AlphaMode::Blend`.
 
 ### Sub-Grid
 
@@ -142,13 +148,12 @@ commands.spawn((
 
 - *Bug:* removing `TrackedGrid` or `GridAxis` will not properly update the other components. It will currently just break. Current workaround is to desapawn the entity.
 - *Missing:* allowing grid tracking by custom means (it is by `With<Camera>` `query.get_single()` at the moment)
-- *Missing:* grid color alpha
 
 ## Compatibility
 
 | Bevy Version | Plugin Version |
 |:------------:|:--------------:|
-|    `0.10`    |     `0.1.0`    |
+|    `0.10`    |  `0.1.0-0.1.1` |
 
 ## License
 

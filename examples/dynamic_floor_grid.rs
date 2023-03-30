@@ -52,6 +52,7 @@ fn spawn_floor_grid(mut commands: Commands) {
             spacing: 5.0_f32,
             count: 32,
             color: Color::SILVER,
+            ..default()
         },
         SubGrid {
             count: 4,

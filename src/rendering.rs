@@ -25,6 +25,7 @@ use crate::{GridAlignment, GridAxis};
 #[uniform(0, ClippedLineMaterialUniform)]
 pub struct ClippedLineMaterial {
     pub color: Color,
+    pub alpha_mode: AlphaMode,
     pub alignment: GridAlignment,
     pub radius: f32,
     pub offset: f32,
@@ -36,6 +37,7 @@ pub struct ClippedLineMaterial {
 impl ClippedLineMaterial {
     pub fn new(
         color: Color,
+        alpha_mode: AlphaMode,
         alignment: GridAlignment,
         radius: f32,
         offset: f32,
@@ -46,6 +48,7 @@ impl ClippedLineMaterial {
         let z_axis_color = axis.and_then(|axis| axis.z).unwrap_or(color);
         Self {
             color,
+            alpha_mode,
             alignment,
             radius,
             offset,
@@ -87,6 +90,10 @@ impl Material for ClippedLineMaterial {
         CLIPPED_LINE_SHADER_HANDLE.typed().into()
     }
 
+    fn alpha_mode(&self) -> AlphaMode {
+        self.alpha_mode
+    }
+
     fn specialize(
         _pipeline: &MaterialPipeline<Self>,
         descriptor: &mut RenderPipelineDescriptor,
@@ -108,12 +115,14 @@ pub const SIMPLE_LINE_SHADER_HANDLE: HandleUntyped =
 pub struct SimpleLineMaterial {
     #[uniform(0)]
     pub color: Color,
+    pub alpha_mode: AlphaMode,
 }
 
 impl SimpleLineMaterial {
-    pub fn new(color: Color) -> Self {
+    pub fn new(color: Color, alpha_mode: AlphaMode) -> Self {
         Self {
             color,
+            alpha_mode,
         }
     }
 }
@@ -121,6 +130,10 @@ impl SimpleLineMaterial {
 impl Material for SimpleLineMaterial {
     fn fragment_shader() -> ShaderRef {
         SIMPLE_LINE_SHADER_HANDLE.typed().into()
+    }
+
+    fn alpha_mode(&self) -> AlphaMode {
+        self.alpha_mode
     }
 
     fn specialize(
