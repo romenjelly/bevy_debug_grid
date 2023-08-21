@@ -1,7 +1,7 @@
 [package]
 name = "bevy_debug_grid"
 description = "A bevy plugin for creating grids, for debugging purposes"
-version = "0.1.1"
+version = "0.2.0"
 repository = "https://github.com/romenjelly/bevy_debug_grid"
 edition = "2021"
 license = "MIT OR Apache-2.0"
@@ -12,15 +12,15 @@ exclude = [
 ]
 
 [dependencies]
-bevy = { version = "0.10", default-features = false, features = [
+bevy = { version = "0.11", default-features = false, features = [
     "bevy_render",
     "bevy_pbr",
     "bevy_asset",
 ] }
 
 [dev-dependencies]
-bevy = "0.10"
-bevy_spectator = "0.2.0"
+bevy = "0.11"
+bevy_spectator = "0.3.0"
 
 [[example]]
 name = "default_cube"

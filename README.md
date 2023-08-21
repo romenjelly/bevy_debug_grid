@@ -5,7 +5,7 @@
 A plugin for creating debug mesh grids in the [bevy](https://bevyengine.org/) game engine.
 
 ![default_cube](./assets/default_cube.jpg "the default cube example")
-*The `default_cube` example*
+_The `default_cube` example_
 
 ## Installation
 
@@ -13,7 +13,7 @@ To install this plugin, add the following to the `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_debug_grid = "0.1"
+bevy_debug_grid = "0.2"
 ```
 
 ## Setup
@@ -119,7 +119,7 @@ commands.spawn((
     GridAxis {
         x: Some(Color::RED),
         z: Some(Color::Blue),
-        // Fills the remainging axis with None
+        // Fills the remaining axis with None
         ..default()
     },
     // Other components...
@@ -146,14 +146,15 @@ commands.spawn((
 
 ## Known Bugs & Missing Features
 
-- *Bug:* removing `TrackedGrid` or `GridAxis` will not properly update the other components. It will currently just break. Current workaround is to desapawn the entity.
-- *Missing:* allowing grid tracking by custom means (it is by `With<Camera>` `query.get_single()` at the moment)
+- _Bug:_ removing `TrackedGrid` or `GridAxis` will not properly update the other components. It will currently just break. Current workaround is to despawn the entity.
+- _Missing:_ allowing grid tracking by custom means (it is by `With<Camera>` `query.get_single()` at the moment)
 
 ## Compatibility
 
 | Bevy Version | Plugin Version |
-|:------------:|:--------------:|
-|    `0.10`    |  `0.1.0-0.1.1` |
+| :----------: | :------------: |
+|    `0.10`    | `0.1.0-0.1.1`  |
+|    `0.11`    |    `0.2.0`     |
 
 ## License
 

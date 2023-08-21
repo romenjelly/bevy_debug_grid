@@ -62,10 +62,7 @@ fn main_grid_vertices_and_size(grid: &Grid, alignment: &GridAlignment) -> (Vec<V
 /// System for meshing untracked (`Without<TrackedGrid>`) grids
 pub fn main_grid_mesher_untracked(
     mut commands: Commands,
-    query_parent: Query<
-        (Entity, &Grid, Option<&Children>),
-        (Changed<Grid>, Without<TrackedGrid>),
-    >,
+    query_parent: Query<(Entity, &Grid, Option<&Children>), (Changed<Grid>, Without<TrackedGrid>)>,
     query_children: Query<Entity, With<GridChild>>,
     mut meshes: ResMut<Assets<Mesh>>,
     mut simple_materials: ResMut<Assets<SimpleLineMaterial>>,
@@ -84,10 +81,7 @@ pub fn main_grid_mesher_untracked(
                 meshes.add(mesh),
                 TransformBundle::default(),
                 VisibilityBundle::default(),
-                simple_materials.add(SimpleLineMaterial::new(
-                    grid.color,
-                    grid.alpha_mode,
-                )),
+                simple_materials.add(SimpleLineMaterial::new(grid.color, grid.alpha_mode)),
             ));
         });
     }
@@ -97,7 +91,13 @@ pub fn main_grid_mesher_untracked(
 pub fn main_grid_mesher_tracked(
     mut commands: Commands,
     query_parent: Query<
-        (Entity, &Grid, &TrackedGrid, Option<&GridAxis>, Option<&Children>),
+        (
+            Entity,
+            &Grid,
+            &TrackedGrid,
+            Option<&GridAxis>,
+            Option<&Children>,
+        ),
         Or<(Changed<Grid>, Changed<TrackedGrid>, Changed<GridAxis>)>,
     >,
     query_children: Query<Entity, With<GridChild>>,
@@ -107,7 +107,10 @@ pub fn main_grid_mesher_tracked(
     for (entity, grid, tracked, axis, children) in query_parent.iter() {
         let (mut vertices, size) = main_grid_vertices_and_size(grid, &tracked.alignment);
         for alignment in [GridAlignment::X, GridAlignment::Z] {
-            vertices.extend(&GridAxis::create_single_axis(size, alignment).map(|vertex| tracked.alignment.shift_vec3(vertex)));
+            vertices.extend(
+                &GridAxis::create_single_axis(size, alignment)
+                    .map(|vertex| tracked.alignment.shift_vec3(vertex)),
+            );
         }
         let mut mesh = Mesh::new(PrimitiveTopology::LineList);
         mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
@@ -157,7 +160,13 @@ pub fn main_grid_mesher_tracked(
 pub fn sub_grid_mesher(
     mut commands: Commands,
     query_parent: Query<
-        (Entity, &Grid, &SubGrid, Option<&TrackedGrid>, Option<&Children>),
+        (
+            Entity,
+            &Grid,
+            &SubGrid,
+            Option<&TrackedGrid>,
+            Option<&Children>,
+        ),
         Or<(Changed<Grid>, Changed<SubGrid>, Changed<TrackedGrid>)>,
     >,
     query_children: Query<Entity, With<SubGridChild>>,
@@ -169,7 +178,9 @@ pub fn sub_grid_mesher(
         let size = grid.count as f32 * grid.spacing;
         let sub_spacing = grid.spacing / (sub_grid.count + 1) as f32;
 
-        let alignment = tracked.map(|tracked| tracked.alignment).unwrap_or(GridAlignment::default());
+        let alignment = tracked
+            .map(|tracked| tracked.alignment)
+            .unwrap_or(GridAlignment::default());
         let vertices = (0..grid.count)
             .flat_map(|offset| (0..sub_grid.count).map(move |sub_offset| (offset, sub_offset)))
             .map(|(offset, sub_offset)| {
@@ -203,10 +214,9 @@ pub fn sub_grid_mesher(
                     None,
                 )));
             } else {
-                child_commands.insert(simple_materials.add(SimpleLineMaterial::new(
-                    sub_grid.color,
-                    grid.alpha_mode,
-                )));
+                child_commands.insert(
+                    simple_materials.add(SimpleLineMaterial::new(sub_grid.color, grid.alpha_mode)),
+                );
             }
         });
     }
@@ -236,16 +246,16 @@ pub fn grid_axis_mesher(
                 common_axis.extend(&unused);
                 for (alignment, color) in used {
                     let mut mesh = Mesh::new(PrimitiveTopology::LineList);
-                    mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, GridAxis::create_single_axis(size, alignment).to_vec());
+                    mesh.insert_attribute(
+                        Mesh::ATTRIBUTE_POSITION,
+                        GridAxis::create_single_axis(size, alignment).to_vec(),
+                    );
                     children.spawn((
                         GridAxisChild,
                         meshes.add(mesh),
                         TransformBundle::default(),
                         VisibilityBundle::default(),
-                        simple_materials.add(SimpleLineMaterial::new(
-                            color,
-                            grid.alpha_mode,
-                        )),
+                        simple_materials.add(SimpleLineMaterial::new(color, grid.alpha_mode)),
                     ));
                 }
             } else {
@@ -264,10 +274,7 @@ pub fn grid_axis_mesher(
                     meshes.add(mesh),
                     TransformBundle::default(),
                     VisibilityBundle::default(),
-                    simple_materials.add(SimpleLineMaterial::new(
-                        grid.color,
-                        grid.alpha_mode,
-                    )),
+                    simple_materials.add(SimpleLineMaterial::new(grid.color, grid.alpha_mode)),
                 ));
             }
         });
@@ -290,22 +297,26 @@ pub fn floor_grid_updater(
 }
 
 /// Despawns children with a marker component upon the removal of their parent
-pub fn despawn_chilren_upon_removal<
-    RemovedParent: Component,
-    ChildMarker: Component,
->(
+pub fn despawn_children_upon_removal<RemovedParent: Component, ChildMarker: Component>(
     mut removed: RemovedComponents<RemovedParent>,
     query: Query<(&Parent, Entity), With<ChildMarker>>,
     mut commands: Commands,
 ) {
-    if removed.is_empty() { return }
+    if removed.is_empty() {
+        return;
+    }
     let mut parent_to_child_map: HashMap<Entity, Vec<Entity>> = HashMap::new();
     for (parent, child) in query.iter() {
-        parent_to_child_map.entry(parent.get())
+        parent_to_child_map
+            .entry(parent.get())
             .and_modify(|children| children.push(child))
             .or_insert_with(|| vec![child]);
     }
-    for entity in removed.into_iter().filter_map(|entity| parent_to_child_map.get(&entity)).flatten() {
+    for entity in removed
+        .into_iter()
+        .filter_map(|entity| parent_to_child_map.get(&entity))
+        .flatten()
+    {
         commands.entity(*entity).despawn();
     }
 }
