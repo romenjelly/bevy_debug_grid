@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::reflect::TypePath;
 use bevy::{
     pbr::{MaterialPipeline, MaterialPipelineKey},
     reflect::TypeUuid,
@@ -20,7 +21,7 @@ use crate::{GridAlignment, GridAxis};
 
 /// Material used for tracked grids.
 /// It will clip beyond a certain distance from the camera, creating the illusion of an infinite grid.
-#[derive(AsBindGroup, Debug, Clone, TypeUuid)]
+#[derive(AsBindGroup, TypePath, Debug, Clone, TypeUuid)]
 #[uuid = "27cb223e-eb7d-4de3-859f-cb070f13dad3"]
 #[uniform(0, ClippedLineMaterialUniform)]
 pub struct ClippedLineMaterial {
@@ -110,7 +111,7 @@ pub const SIMPLE_LINE_SHADER_HANDLE: HandleUntyped =
     HandleUntyped::weak_from_u64(Shader::TYPE_UUID, 14181856097290587572);
 
 /// Simple line material with no functionality beyond assigning a color
-#[derive(Default, AsBindGroup, TypeUuid, Debug, Clone)]
+#[derive(Default, AsBindGroup, TypeUuid, TypePath, Debug, Clone)]
 #[uuid = "2fbc30f9-03f4-46da-ac0d-de48e7392217"]
 pub struct SimpleLineMaterial {
     #[uniform(0)]

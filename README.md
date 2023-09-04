@@ -13,7 +13,7 @@ To install this plugin, add the following to the `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_debug_grid = "0.1"
+bevy_debug_grid = "0.2"
 ```
 
 ## Setup
@@ -26,13 +26,15 @@ use bevy_debug_grid::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(DebugGridPlugin::with_floor_grid())
+        .add_plugins((
+            DefaultPlugins,
+            DebugGridPlugin::with_floor_grid(),
+        ))
         .run();
 }
 ```
 
-It is also possible to avoid spawning a default floor grid by doing `.add_plugin(DebugGridPlugin::without_floor_grid())`
+It is also possible to avoid spawning a default floor grid by doing `.add_plugins(DebugGridPlugin::without_floor_grid())`
 
 ## Examples
 
@@ -88,7 +90,7 @@ commands.spawn((
 The `Grid::default()` is a small silver grid with 8 lines per axis and a spacing of `0.25_f32` between them.
 
 Grids have an `alpha_mode`, which determines the alpha mode for the grid material, as well as all other related materials, such as sub-grids, and grid axis.  
-The `color` should have an alpha value for alpha modes outside of `AlphaMode::Opaque` to make sense.  
+The `color` should have an alpha value for alpha modes outside of `AlphaMode::Opaque` to have a visible effect.  
 The default alpha mode for grids is `AlphaMode::Blend`.
 
 ### Sub-Grid
@@ -146,7 +148,7 @@ commands.spawn((
 
 ## Known Bugs & Missing Features
 
-- *Bug:* removing `TrackedGrid` or `GridAxis` will not properly update the other components. It will currently just break. Current workaround is to desapawn the entity.
+- *Bug:* removing `TrackedGrid` or `GridAxis` will not properly update the other components. It will currently just break. Current workaround is to despawn the entity.
 - *Missing:* allowing grid tracking by custom means (it is by `With<Camera>` `query.get_single()` at the moment)
 
 ## Compatibility
@@ -154,6 +156,7 @@ commands.spawn((
 | Bevy Version | Plugin Version |
 |:------------:|:--------------:|
 |    `0.10`    |  `0.1.0-0.1.1` |
+|    `0.11`    |     `0.2.0`    |
 
 ## License
 

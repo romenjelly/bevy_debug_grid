@@ -4,12 +4,16 @@ use bevy_debug_grid::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(SpectatorPlugin)
-        .add_plugin(DebugGridPlugin::without_floor_grid())
-        .add_startup_system(spawn_camera)
-        .add_startup_system(spawn_demonstration_grid)
-        .add_system(change_axis_color)
+        .add_plugins((
+            DefaultPlugins,
+            SpectatorPlugin,
+            DebugGridPlugin::without_floor_grid(),
+        ))
+        .add_systems(Startup, (
+            spawn_camera,
+            spawn_demonstration_grid,
+        ))
+        .add_systems(Update, change_axis_color)
         .run();
 }
 

@@ -5,16 +5,22 @@ use std::f32;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(SpectatorPlugin)
-        .add_plugin(DebugGridPlugin::with_floor_grid())
-        .add_startup_system(spawn_camera)
-        .add_startup_system(spawn_demonstration_objects)
-        .add_system(grid_changing_count)
-        .add_system(grid_changing_spacing)
-        .add_system(grid_changing_sub_count)
-        .add_system(grid_changing_color)
-        .add_system(grid_changing_sub_color)
+        .add_plugins((
+            DefaultPlugins,
+            SpectatorPlugin,
+            DebugGridPlugin::with_floor_grid(),
+        ))
+        .add_systems(Startup, (
+            spawn_camera,
+            spawn_demonstration_objects,
+        ))
+        .add_systems(Update, (
+            grid_changing_count,
+            grid_changing_spacing,
+            grid_changing_sub_count,
+            grid_changing_color,
+            grid_changing_sub_color,
+        ))
         .run();
 }
 

@@ -5,13 +5,19 @@ use std::f32;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(SpectatorPlugin)
-        .add_plugin(DebugGridPlugin::with_floor_grid())
-        .add_startup_system(spawn_camera)
-        .add_startup_system(spawn_demonstration_objects)
-        .add_system(move_objects)
-        .add_system(spin_objects)
+        .add_plugins((
+            DefaultPlugins,
+            SpectatorPlugin,
+            DebugGridPlugin::with_floor_grid(),
+        ))
+        .add_systems(Startup, (
+            spawn_camera,
+            spawn_demonstration_objects,
+        ))
+        .add_systems(Update, (
+            move_objects,
+            spin_objects,
+        ))
         .run();
 }
 

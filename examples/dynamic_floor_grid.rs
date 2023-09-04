@@ -13,14 +13,20 @@ const COLOR_Z_END: Color = Color::YELLOW;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(SpectatorPlugin)
-        .add_plugin(DebugGridPlugin::without_floor_grid())
-        .add_startup_system(spawn_floor_grid)
-        .add_startup_system(spawn_camera)
-        .add_startup_system(spawn_center_sphere)
-        .add_system(move_floor_grid)
-        .add_system(change_axis_color)
+        .add_plugins((
+            DefaultPlugins,
+            SpectatorPlugin,
+            DebugGridPlugin::without_floor_grid(),
+        ))
+        .add_systems(Startup, (
+            spawn_floor_grid,
+            spawn_camera,
+            spawn_center_sphere,
+        ))
+        .add_systems(Update, (
+            move_floor_grid,
+            change_axis_color,
+        ))
         .run();
 }
 
