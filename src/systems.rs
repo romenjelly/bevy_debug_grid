@@ -278,12 +278,12 @@ pub fn grid_axis_mesher(
 /// Does nothing if the camera query's `.get_single()` fails.
 pub fn floor_grid_updater(
     mut floor_grid_query: Query<(&mut Transform, &Grid, &TrackedGrid)>,
-    camera_query: Query<&Transform, (With<Camera>, Without<TrackedGrid>)>,
+    camera_query: Query<&GlobalTransform, (With<Camera>, Without<TrackedGrid>)>,
 ) {
     let Ok(camera_transform) = camera_query.get_single() else { return };
     for (mut grid_transform, grid, tracked) in floor_grid_query.iter_mut() {
         let alignment = tracked.alignment.to_inverted_axis_vec3();
-        let translation = camera_transform.translation * alignment;
+        let translation = camera_transform.translation() * alignment;
         let offset = tracked.alignment.to_axis_vec3() * tracked.offset;
         grid_transform.translation = (translation / grid.spacing).floor() * grid.spacing + offset;
     }
