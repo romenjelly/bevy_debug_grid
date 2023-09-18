@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use bevy::reflect::TypePath;
-use bevy::reflect::TypePath;
 use bevy::{
     pbr::{MaterialPipeline, MaterialPipelineKey},
     reflect::TypeUuid,
