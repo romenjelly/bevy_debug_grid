@@ -67,26 +67,30 @@ impl Plugin for DebugGridPlugin {
             Shader::from_wgsl
         );
 
-        app
-            .add_plugins((
-                MaterialPlugin::<SimpleLineMaterial>::default(),
-                MaterialPlugin::<ClippedLineMaterial>::default(),
-            ))
-            .add_systems(Update, (
+        app.add_plugins((
+            MaterialPlugin::<SimpleLineMaterial>::default(),
+            MaterialPlugin::<ClippedLineMaterial>::default(),
+        ))
+        .add_systems(
+            Update,
+            (
                 main_grid_mesher_untracked,
                 main_grid_mesher_tracked,
                 sub_grid_mesher,
                 grid_axis_mesher,
                 floor_grid_updater,
-            ))
-            .add_systems(Update, (
-                despawn_chilren_upon_removal::<Grid, GridChild>,
-                despawn_chilren_upon_removal::<Grid, SubGridChild>,
-                despawn_chilren_upon_removal::<Grid, GridAxisChild>,
-                despawn_chilren_upon_removal::<SubGrid, SubGridChild>,
-                despawn_chilren_upon_removal::<GridAxis, GridAxisChild>,
-            ))
-            ;
+            ),
+        )
+        .add_systems(
+            Update,
+            (
+                despawn_children_upon_removal::<Grid, GridChild>,
+                despawn_children_upon_removal::<Grid, SubGridChild>,
+                despawn_children_upon_removal::<Grid, GridAxisChild>,
+                despawn_children_upon_removal::<SubGrid, SubGridChild>,
+                despawn_children_upon_removal::<GridAxis, GridAxisChild>,
+            ),
+        );
         if self.spawn_floor_grid {
             app.add_systems(Startup, spawn_floor_grid);
         }
