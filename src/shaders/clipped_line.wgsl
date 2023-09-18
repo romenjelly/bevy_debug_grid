@@ -1,5 +1,5 @@
-#import bevy_pbr::mesh_view_bindings view
 #import bevy_pbr::mesh_vertex_output MeshVertexOutput
+#import bevy_pbr::mesh_view_bindings view
 
 const LOW: f32 = 0.001;
 const HIGH: f32 = 0.002;

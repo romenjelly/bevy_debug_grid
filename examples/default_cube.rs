@@ -4,11 +4,15 @@ use bevy_spectator::*;
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .add_plugin(SpectatorPlugin)
-        .add_plugin(DebugGridPlugin::with_floor_grid())
-        .add_startup_system(spawn_camera)
-        .add_startup_system(default_cube)
+        .add_plugins((
+            DefaultPlugins,
+            SpectatorPlugin,
+            DebugGridPlugin::with_floor_grid(),
+        ))
+        .add_systems(Startup, (
+            spawn_camera,
+            default_cube,
+        ))
         .run();
 }
 
