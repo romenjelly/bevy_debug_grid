@@ -1,4 +1,7 @@
-use bevy::{prelude::{Plugin, MaterialPlugin}, asset::load_internal_asset};
+use bevy::{
+    asset::load_internal_asset,
+    prelude::{MaterialPlugin, Plugin},
+};
 
 use crate::*;
 
@@ -24,7 +27,7 @@ pub fn spawn_floor_grid(mut commands: Commands) {
 
 /// The plugin which allows floor grids to work
 pub struct DebugGridPlugin {
-    spawn_floor_grid: bool
+    spawn_floor_grid: bool,
 }
 
 impl DebugGridPlugin {
