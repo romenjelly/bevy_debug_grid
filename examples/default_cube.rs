@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use bevy_spectator::*;
 use bevy_debug_grid::*;
+use bevy_spectator::*;
 
 fn main() {
     App::new()
@@ -16,13 +16,8 @@ fn main() {
         .run();
 }
 
-fn spawn_camera(
-    mut commands: Commands,
-) {
-    commands.spawn((
-        Camera3dBundle::default(),
-        Spectator,
-    ));
+fn spawn_camera(mut commands: Commands) {
+    commands.spawn((Camera3dBundle::default(), Spectator));
 }
 
 fn default_cube(

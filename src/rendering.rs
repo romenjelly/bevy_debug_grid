@@ -73,7 +73,10 @@ pub struct ClippedLineMaterialUniform {
 }
 
 impl AsBindGroupShaderType<ClippedLineMaterialUniform> for ClippedLineMaterial {
-    fn as_bind_group_shader_type(&self, _images: &RenderAssets<Image>) -> ClippedLineMaterialUniform {
+    fn as_bind_group_shader_type(
+        &self,
+        _images: &RenderAssets<Image>,
+    ) -> ClippedLineMaterialUniform {
         ClippedLineMaterialUniform {
             color: self.color,
             alignment: self.alignment.into(),
@@ -121,10 +124,7 @@ pub struct SimpleLineMaterial {
 
 impl SimpleLineMaterial {
     pub fn new(color: Color, alpha_mode: AlphaMode) -> Self {
-        Self {
-            color,
-            alpha_mode,
-        }
+        Self { color, alpha_mode }
     }
 }
 

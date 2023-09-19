@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use bevy_spectator::*;
 use bevy_debug_grid::*;
+use bevy_spectator::*;
 use std::f32;
 
 fn main() {
@@ -21,13 +21,8 @@ fn main() {
         .run();
 }
 
-fn spawn_camera(
-    mut commands: Commands,
-) {
-    commands.spawn((
-        Camera3dBundle::default(),
-        Spectator,
-    ));
+fn spawn_camera(mut commands: Commands) {
+    commands.spawn((Camera3dBundle::default(), Spectator));
 }
 
 #[derive(Component)]
@@ -93,57 +88,63 @@ fn spawn_demonstration_objects(
         Spinning,
     ));
     // Moving grid, cyan
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(shape::Cube::default().into()),
-        material: materials.add(Color::WHITE.into()),
-        transform: Transform::from_xyz(-spacing_offset, height_offset, depth_offset),
-        ..default()
-    }).with_children(|child| {
-        child.spawn((
-            TransformBundle::default(),
-            VisibilityBundle::default(),
-            Grid {
-                color: Color::CYAN,
-                ..default()
-            },
-            Moving { origin: Vec3::ZERO },
-        ));
-    });
+    commands
+        .spawn(PbrBundle {
+            mesh: meshes.add(shape::Cube::default().into()),
+            material: materials.add(Color::WHITE.into()),
+            transform: Transform::from_xyz(-spacing_offset, height_offset, depth_offset),
+            ..default()
+        })
+        .with_children(|child| {
+            child.spawn((
+                TransformBundle::default(),
+                VisibilityBundle::default(),
+                Grid {
+                    color: Color::CYAN,
+                    ..default()
+                },
+                Moving { origin: Vec3::ZERO },
+            ));
+        });
     // Spinning grid, magenta
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(shape::Capsule::default().into()),
-        material: materials.add(Color::WHITE.into()),
-        transform: Transform::from_xyz(0.0_f32, height_offset, depth_offset),
-        ..default()
-    }).with_children(|child| {
-        child.spawn((
-            TransformBundle::default(),
-            VisibilityBundle::default(),
-            Grid {
-                color: Color::rgb(1.0_f32, 0.0_f32, 1.0_f32),  // Magenta
-                ..default()
-            },
-            Spinning,
-        ));
-    });
+    commands
+        .spawn(PbrBundle {
+            mesh: meshes.add(shape::Capsule::default().into()),
+            material: materials.add(Color::WHITE.into()),
+            transform: Transform::from_xyz(0.0_f32, height_offset, depth_offset),
+            ..default()
+        })
+        .with_children(|child| {
+            child.spawn((
+                TransformBundle::default(),
+                VisibilityBundle::default(),
+                Grid {
+                    color: Color::rgb(1.0_f32, 0.0_f32, 1.0_f32), // Magenta
+                    ..default()
+                },
+                Spinning,
+            ));
+        });
     // Moving and spinning grid, yellow
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(shape::Torus::default().into()),
-        material: materials.add(Color::WHITE.into()),
-        transform: Transform::from_xyz(spacing_offset, height_offset, depth_offset),
-        ..default()
-    }).with_children(|child| {
-        child.spawn((
-            TransformBundle::default(),
-            VisibilityBundle::default(),
-            Grid {
-                color: Color::YELLOW,
-                ..default()
-            },
-            Moving { origin: Vec3::ZERO },
-            Spinning,
-        ));
-    });
+    commands
+        .spawn(PbrBundle {
+            mesh: meshes.add(shape::Torus::default().into()),
+            material: materials.add(Color::WHITE.into()),
+            transform: Transform::from_xyz(spacing_offset, height_offset, depth_offset),
+            ..default()
+        })
+        .with_children(|child| {
+            child.spawn((
+                TransformBundle::default(),
+                VisibilityBundle::default(),
+                Grid {
+                    color: Color::YELLOW,
+                    ..default()
+                },
+                Moving { origin: Vec3::ZERO },
+                Spinning,
+            ));
+        });
 
     // Point light
     commands.spawn(PointLightBundle {
@@ -152,24 +153,19 @@ fn spawn_demonstration_objects(
     });
 }
 
-fn move_objects(
-    mut query: Query<(&mut Transform, &Moving)>,
-    time: Res<Time>,
-) {
+fn move_objects(mut query: Query<(&mut Transform, &Moving)>, time: Res<Time>) {
     for (mut transform, moving) in query.iter_mut() {
         let elapsed = time.elapsed().as_secs_f32();
-        transform.translation = moving.origin + Vec3::new(
-            f32::sin(elapsed + f32::cos(elapsed)),
-            f32::cos(elapsed + f32::sin(elapsed)),
-            f32::cos(elapsed * 0.5_f32),
-        );
+        transform.translation = moving.origin
+            + Vec3::new(
+                f32::sin(elapsed + f32::cos(elapsed)),
+                f32::cos(elapsed + f32::sin(elapsed)),
+                f32::cos(elapsed * 0.5_f32),
+            );
     }
 }
 
-fn spin_objects(
-    mut query: Query<&mut Transform, With<Spinning>>,
-    time: Res<Time>,
-) {
+fn spin_objects(mut query: Query<&mut Transform, With<Spinning>>, time: Res<Time>) {
     for mut transform in query.iter_mut() {
         let elapsed = time.elapsed().as_secs_f32();
         transform.rotation = Quat::from_euler(

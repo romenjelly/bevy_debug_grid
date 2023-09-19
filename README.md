@@ -5,7 +5,7 @@
 A plugin for creating debug mesh grids in the [bevy](https://bevyengine.org/) game engine.
 
 ![default_cube](./assets/default_cube.jpg "the default cube example")
-*The `default_cube` example*
+_The `default_cube` example_
 
 ## Installation
 
@@ -121,7 +121,7 @@ commands.spawn((
     GridAxis {
         x: Some(Color::RED),
         z: Some(Color::Blue),
-        // Fills the remainging axis with None
+        // Fills the remaining axis with None
         ..default()
     },
     // Other components...

@@ -159,10 +159,7 @@ impl GridAxis {
 
     /// Returns the default axis for a grid
     pub fn default_axis() -> [GridAlignment; 2] {
-        [
-            GridAlignment::X,
-            GridAlignment::Z,
-        ]
+        [GridAlignment::X, GridAlignment::Z]
     }
 
     /// Returns an axis color by grid alignment, if such a color is configured per that axis
