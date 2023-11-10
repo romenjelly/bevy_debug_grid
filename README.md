@@ -4,7 +4,7 @@
 
 A plugin for creating debug mesh grids in the [bevy](https://bevyengine.org/) game engine.
 
-![default_cube](./assets/default_cube.jpg "the default cube example")
+![default_cube](./assets/default_cube.png "the default cube example")
 *The `default_cube` example*
 
 ## Installation
