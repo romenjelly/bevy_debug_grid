@@ -274,16 +274,16 @@ pub fn grid_axis_mesher(
     }
 }
 
-/// System which moves tracked grids along with the camera.
-/// Does nothing if the camera query's `.get_single()` fails.
-pub fn floor_grid_updater(
+/// System which moves tracked grids along with the defined component `T`.
+/// Does nothing if the query's `.get_single()` fails.
+pub fn floor_grid_updater<T: Component>(
     mut floor_grid_query: Query<(&mut Transform, &Grid, &TrackedGrid)>,
-    camera_query: Query<&GlobalTransform, (With<Camera>, Without<TrackedGrid>)>,
+    tracked_transform_query: Query<&GlobalTransform, (With<T>, Without<TrackedGrid>)>,
 ) {
-    let Ok(camera_transform) = camera_query.get_single() else { return };
+    let Ok(tracked_transform) = tracked_transform_query.get_single() else { return };
     for (mut grid_transform, grid, tracked) in floor_grid_query.iter_mut() {
         let alignment = tracked.alignment.to_inverted_axis_vec3();
-        let translation = camera_transform.translation() * alignment;
+        let translation = tracked_transform.translation() * alignment;
         let offset = tracked.alignment.to_axis_vec3() * tracked.offset;
         grid_transform.translation = (translation / grid.spacing).floor() * grid.spacing + offset;
     }

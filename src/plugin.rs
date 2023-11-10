@@ -1,4 +1,6 @@
-use bevy::{prelude::{Plugin, MaterialPlugin}, asset::load_internal_asset};
+use std::marker::PhantomData;
+use bevy::prelude::*;
+use bevy::asset::load_internal_asset;
 
 use crate::*;
 
@@ -23,15 +25,17 @@ pub fn spawn_floor_grid(mut commands: Commands) {
 }
 
 /// The plugin which allows floor grids to work
-pub struct DebugGridPlugin {
-    spawn_floor_grid: bool
+pub struct TrackedDebugGridPlugin<T: Component> {
+    spawn_floor_grid: bool,
+    _phantom: PhantomData<T>,
 }
 
-impl DebugGridPlugin {
+impl<T: Component> TrackedDebugGridPlugin<T> {
     /// Adds the plugin along with a default floor grid
     pub fn with_floor_grid() -> Self {
         Self {
             spawn_floor_grid: true,
+            _phantom: PhantomData,
         }
     }
 
@@ -39,18 +43,19 @@ impl DebugGridPlugin {
     pub fn without_floor_grid() -> Self {
         Self {
             spawn_floor_grid: false,
+            _phantom: PhantomData,
         }
     }
 }
 
-impl Default for DebugGridPlugin {
+impl<T: Component> Default for TrackedDebugGridPlugin<T> {
     fn default() -> Self {
         Self::with_floor_grid()
     }
 }
 
-impl Plugin for DebugGridPlugin {
-    fn build(&self, app: &mut bevy::prelude::App) {
+impl<T: Component> Plugin for TrackedDebugGridPlugin<T> {
+    fn build(&self, app: &mut App) {
         load_internal_asset!(
             app,
             CLIPPED_LINE_SHADER_HANDLE,
@@ -74,7 +79,7 @@ impl Plugin for DebugGridPlugin {
                 main_grid_mesher_tracked,
                 sub_grid_mesher,
                 grid_axis_mesher,
-                floor_grid_updater,
+                floor_grid_updater::<T>,
             ))
             .add_systems(Update, (
                 despawn_chilren_upon_removal::<Grid, GridChild>,
@@ -89,3 +94,5 @@ impl Plugin for DebugGridPlugin {
         }
     }
 }
+
+pub type DebugGridPlugin = TrackedDebugGridPlugin<Camera>;

@@ -146,6 +146,51 @@ commands.spawn((
 ));
 ```
 
+### Custom Tracking for Grids
+
+Tracked grids have the illusion of being infinite by physically being moved next to the camera and some shader trickery. However, this can be an issue when multiple cameras are involved.
+
+To achieve custom tracking, the world must contain exactly one entity with a marker component which is desired to be tracked. The `DebugGridPlugin` tracks a `Camera`, since it is a type alias for `TrackedDebugGridPlugin::<Camera>`.
+
+To track a component other than a `Camera`, add the `TrackedDebugGridPlugin::<T>` instead of the `DebugGridPlugin` to your app, where `T` is the component which should be tracked.
+
+Example:
+
+```rs
+use bevy::prelude::*;
+use bevy_debug_grid::*;
+
+// Custom component to track grids
+#[derive(Component)]
+struct MainCamera;
+
+// Spawns the main camera
+fn spawn_main_camera(
+    mut commands: Commands,
+) {
+    commands.spawn((
+        Camera3dBundle::default(),
+        MainCamera,
+    ));
+}
+
+// Reads inputs to control the camera
+fn control_main_camera(/* ... */) { /* ... */ }
+
+fn main() {
+    App::new()
+        .add_plugins((
+            DefaultPlugins,
+            TrackedDebugGridPlugin::<MainCamera>::with_floor_grid(),
+        ))
+        .add_systems(Startup, spawn_main_camera)
+        .add_systems(Update, control_main_camera)
+        .run();
+}
+```
+
+Tracked grids will now track alongside the entity which has the `MainCamera` component.
+
 ## Known Bugs & Missing Features
 
 - *Bug:* removing `TrackedGrid` or `GridAxis` will not properly update the other components. It will currently just break. Current workaround is to despawn the entity.
