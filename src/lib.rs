@@ -1,12 +1,12 @@
 use bevy::prelude::*;
 
 mod plugin;
-mod rendering;
-mod systems;
+pub mod rendering;
+pub mod systems;
 
 pub use plugin::*;
-pub use rendering::*;
-pub use systems::*;
+use rendering::*;
+use systems::*;
 
 pub const DEFAULT_GRID_ALPHA: f32 = 0.5_f32;
 
