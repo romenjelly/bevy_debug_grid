@@ -1,5 +1,5 @@
-#import bevy_pbr::mesh_vertex_output MeshVertexOutput
-#import bevy_pbr::mesh_view_bindings view
+#import bevy_pbr::forward_io::VertexOutput
+#import bevy_pbr::mesh_view_bindings::view
 
 const LOW: f32 = 0.001;
 const HIGH: f32 = 0.002;
@@ -19,7 +19,7 @@ var<uniform> material: LineMaterial;
 
 @fragment
 fn fragment(
-    mesh: MeshVertexOutput,
+    mesh: VertexOutput,
 ) -> @location(0) vec4<f32> {
     let delta = (view.world_position.xyz - mesh.world_position.xyz) * material.alignment;
     let dist_squared = dot(delta, delta);

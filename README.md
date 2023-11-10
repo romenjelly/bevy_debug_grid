@@ -13,7 +13,7 @@ To install this plugin, add the following to the `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_debug_grid = "0.2"
+bevy_debug_grid = "0.3"
 ```
 
 ## Setup
@@ -194,14 +194,14 @@ Tracked grids will now track alongside the entity which has the `MainCamera` com
 ## Known Bugs & Missing Features
 
 - *Bug:* removing `TrackedGrid` or `GridAxis` will not properly update the other components. It will currently just break. Current workaround is to despawn the entity.
-- *Missing:* allowing grid tracking by custom means (it is by `With<Camera>` `query.get_single()` at the moment)
 
 ## Compatibility
 
 | Bevy Version | Plugin Version |
 |:------------:|:--------------:|
-|    `0.10`    |  `0.1.0-0.1.1` |
+|    `0.12`    |      `0.3`     |
 |    `0.11`    |  `0.2.0-0.2.1` |
+|    `0.10`    |  `0.1.0-0.1.1` |
 
 ## License
 

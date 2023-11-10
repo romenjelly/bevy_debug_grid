@@ -1,4 +1,4 @@
-#import bevy_pbr::mesh_vertex_output MeshVertexOutput
+#import bevy_pbr::forward_io::VertexOutput
 
 struct SimpleLineMaterial {
     color: vec4<f32>,
@@ -9,7 +9,7 @@ var<uniform> material: SimpleLineMaterial;
 
 @fragment
 fn fragment(
-    mesh: MeshVertexOutput,
+    mesh: VertexOutput,
 ) -> @location(0) vec4<f32> {
     return material.color;
 }

@@ -305,7 +305,7 @@ pub fn despawn_chilren_upon_removal<
             .and_modify(|children| children.push(child))
             .or_insert_with(|| vec![child]);
     }
-    for entity in removed.into_iter().filter_map(|entity| parent_to_child_map.get(&entity)).flatten() {
+    for entity in removed.read().filter_map(|entity| parent_to_child_map.get(&entity)).flatten() {
         commands.entity(*entity).despawn();
     }
 }

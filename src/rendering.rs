@@ -14,14 +14,13 @@ use bevy::{
 };
 
 /// Handle for the clipped line shader
-pub const CLIPPED_LINE_SHADER_HANDLE: HandleUntyped =
-    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, 14735426461149675473);
+pub const CLIPPED_LINE_SHADER_HANDLE: Handle<Shader> = Handle::weak_from_u128(14735426461149675473);
 
 use crate::{GridAlignment, GridAxis};
 
 /// Material used for tracked grids.
 /// It will clip beyond a certain distance from the camera, creating the illusion of an infinite grid.
-#[derive(AsBindGroup, TypePath, Debug, Clone, TypeUuid)]
+#[derive(AsBindGroup, Asset, TypePath, Debug, Clone, TypeUuid)]
 #[uuid = "27cb223e-eb7d-4de3-859f-cb070f13dad3"]
 #[uniform(0, ClippedLineMaterialUniform)]
 pub struct ClippedLineMaterial {
@@ -88,7 +87,7 @@ impl AsBindGroupShaderType<ClippedLineMaterialUniform> for ClippedLineMaterial {
 
 impl Material for ClippedLineMaterial {
     fn fragment_shader() -> ShaderRef {
-        CLIPPED_LINE_SHADER_HANDLE.typed().into()
+        CLIPPED_LINE_SHADER_HANDLE.into()
     }
 
     fn alpha_mode(&self) -> AlphaMode {
@@ -107,11 +106,10 @@ impl Material for ClippedLineMaterial {
 }
 
 /// Handle for the simple line shader
-pub const SIMPLE_LINE_SHADER_HANDLE: HandleUntyped =
-    HandleUntyped::weak_from_u64(Shader::TYPE_UUID, 14181856097290587572);
+pub const SIMPLE_LINE_SHADER_HANDLE: Handle<Shader> = Handle::weak_from_u128(14181856097290587572);
 
 /// Simple line material with no functionality beyond assigning a color
-#[derive(Default, AsBindGroup, TypeUuid, TypePath, Debug, Clone)]
+#[derive(Default, Asset, AsBindGroup, TypeUuid, TypePath, Debug, Clone)]
 #[uuid = "2fbc30f9-03f4-46da-ac0d-de48e7392217"]
 pub struct SimpleLineMaterial {
     #[uniform(0)]
@@ -130,7 +128,7 @@ impl SimpleLineMaterial {
 
 impl Material for SimpleLineMaterial {
     fn fragment_shader() -> ShaderRef {
-        SIMPLE_LINE_SHADER_HANDLE.typed().into()
+        SIMPLE_LINE_SHADER_HANDLE.into()
     }
 
     fn alpha_mode(&self) -> AlphaMode {
