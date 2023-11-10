@@ -290,7 +290,7 @@ pub fn floor_grid_updater<T: Component>(
 }
 
 /// Despawns children with a marker component upon the removal of their parent
-pub fn despawn_chilren_upon_removal<
+pub fn despawn_children_upon_removal<
     RemovedParent: Component,
     ChildMarker: Component,
 >(

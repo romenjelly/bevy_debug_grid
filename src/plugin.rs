@@ -4,7 +4,7 @@ use bevy::asset::load_internal_asset;
 
 use crate::*;
 
-/// Spawns a default floor grid, resembing the one used in [Blender](https://www.blender.org/)
+/// Spawns a default floor grid, resembling the one used in [Blender](https://www.blender.org/)
 pub fn spawn_floor_grid(mut commands: Commands) {
     commands.spawn((
         Grid {
@@ -82,11 +82,11 @@ impl<T: Component> Plugin for TrackedDebugGridPlugin<T> {
                 floor_grid_updater::<T>,
             ))
             .add_systems(Update, (
-                despawn_chilren_upon_removal::<Grid, GridChild>,
-                despawn_chilren_upon_removal::<Grid, SubGridChild>,
-                despawn_chilren_upon_removal::<Grid, GridAxisChild>,
-                despawn_chilren_upon_removal::<SubGrid, SubGridChild>,
-                despawn_chilren_upon_removal::<GridAxis, GridAxisChild>,
+                despawn_children_upon_removal::<Grid, GridChild>,
+                despawn_children_upon_removal::<Grid, SubGridChild>,
+                despawn_children_upon_removal::<Grid, GridAxisChild>,
+                despawn_children_upon_removal::<SubGrid, SubGridChild>,
+                despawn_children_upon_removal::<GridAxis, GridAxisChild>,
             ))
             ;
         if self.spawn_floor_grid {

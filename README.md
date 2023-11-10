@@ -18,7 +18,8 @@ bevy_debug_grid = "0.3"
 
 ## Setup
 
-To use the plugin, import it by first doing `use bevy_debug_grid::*;` and then add the provided `DebugGridPlugin` plugin.
+To use the plugin, import it: `use bevy_debug_grid::*;`  
+Then add the provided `DebugGridPlugin` plugin to your app.
 
 ```rs
 use bevy::prelude::*;
@@ -53,7 +54,7 @@ Here's an exhaustive list of the provided examples:
 
 ## Behavior
 
-All grids spawned by this plugin are meshes, rendered with a `polygoneMode` of `PolyginMode::Line`.  
+All grids spawned by this plugin are meshes, rendered with a `polygonMode` of `PolygonMode::Line`.  
 An alternative would've been to create a plane and draw the lines using a shader, but it's not what has been chosen for this plugin.
 
 This plugin's components work by spawning marked children. For example, a `Grid` will spawn a `GridChild` which will contain a `Mesh` and a `Material`.  
@@ -121,7 +122,7 @@ commands.spawn((
     GridAxis {
         x: Some(Color::RED),
         z: Some(Color::Blue),
-        // Fills the remainging axis with None
+        // Fills the remaining axis with None
         ..default()
     },
     // Other components...

@@ -176,7 +176,7 @@ fn grid_changing_count(
     time: Res<Time>,
 ) {
     for (mut grid, count, period) in query.iter_mut() {
-        let delta = count.max - count.min + 1;  // +1 To adjust for osciallation upper bound
+        let delta = count.max - count.min + 1;  // +1 To adjust for oscillation upper bound
         let oscillation = period.oscillation(&time);
         grid.count = count.min + (delta as f32 * oscillation) as usize;
     }
@@ -210,7 +210,7 @@ fn grid_changing_sub_count(
     time: Res<Time>,
 ) {
     for (mut sub_grid, count, period) in query.iter_mut() {
-        let delta = count.max - count.min + 1;  // +1 To adjust for osciallation upper bound
+        let delta = count.max - count.min + 1;  // +1 To adjust for oscillation upper bound
         let oscillation = period.oscillation(&time);
         sub_grid.count = count.min + (delta as f32 * oscillation) as usize;
     }
