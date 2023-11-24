@@ -9,11 +9,11 @@ A plugin for creating debug mesh grids in the [bevy](https://bevyengine.org/) ga
 
 ## Installation
 
-To install this plugin, add the following to the `Cargo.toml`:
+To install this plugin, add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_debug_grid = "0.3"
+bevy_debug_grid = "0.4"
 ```
 
 ## Setup
@@ -151,7 +151,9 @@ commands.spawn((
 
 Tracked grids have the illusion of being infinite by physically being moved next to the camera and some shader trickery. However, this can be an issue when multiple cameras are involved.
 
-To achieve custom tracking, the world must contain exactly one entity with a marker component which is desired to be tracked. The `DebugGridPlugin` tracks a `Camera`, since it is a type alias for `TrackedDebugGridPlugin::<Camera>`.
+#### Custom Tracking Using Generics
+
+To achieve generic custom tracking, the world must contain exactly one entity with a marker component which is desired to be tracked. The `DebugGridPlugin` tracks a `Camera`, since it is a type alias for `TrackedDebugGridPlugin::<Camera>`.
 
 To track a component other than a `Camera`, add the `TrackedDebugGridPlugin::<T>` instead of the `DebugGridPlugin` to your app, where `T` is the component which should be tracked.
 
@@ -191,6 +193,41 @@ fn main() {
 ```
 
 Tracked grids will now track alongside the entity which has the `MainCamera` component.
+In the above example, tracked grids will now track alongside the entity which has the `MainCamera` component.
+
+#### Custom Tracking Using Entity Overrides
+
+Grids can be tracked by setting a custom entity override.
+
+This can be required when rendering to a different camera which renders to a texture, likely on a different render layer.
+
+This override is defined by setting the `tracking_override` of a `TrackedGrid`.
+
+```rs
+let entity = commands.spawn(
+    // Component bundle...
+).id(); // Get the Entity
+
+commands.spawn((
+    Grid { /* ... */ },
+    TrackedGrid {
+        // Set the entity as the tracking override
+        tracking_override: Some(entity),
+        ..default()
+    },
+    // Other components...
+));
+```
+
+A tracked grid with an override will then no longer be tracked to the plugin's generic component, and instead follow the given entity.
+
+If the entity is despawned, the tracked grid will stop updating its position.
+
+### Render Layers
+
+Adding a `RenderLayers` component to an entity with a `Grid` will ensure that all spawned grid meshes will also contain the same `RenderLayers`.
+
+`RenderLayers` do also participate in change detection when updating grid properties.
 
 ## Known Bugs & Missing Features
 
@@ -200,7 +237,7 @@ Tracked grids will now track alongside the entity which has the `MainCamera` com
 
 | Bevy Version | Plugin Version |
 |:------------:|:--------------:|
-|    `0.12`    |      `0.3`     |
+|    `0.12`    |  `0.3.0-0.4.0` |
 |    `0.11`    |  `0.2.0-0.2.1` |
 |    `0.10`    |  `0.1.0-0.1.1` |
 

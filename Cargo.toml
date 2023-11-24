@@ -1,7 +1,7 @@
 [package]
 name = "bevy_debug_grid"
 description = "A bevy plugin for creating grids, for debugging purposes"
-version = "0.3.0"
+version = "0.4.0"
 repository = "https://github.com/romenjelly/bevy_debug_grid"
 edition = "2021"
 license = "MIT OR Apache-2.0"
@@ -41,3 +41,7 @@ path = "examples/changing_grid_axis.rs"
 [[example]]
 name = "dynamic_floor_grid"
 path = "examples/dynamic_floor_grid.rs"
+
+[[example]]
+name = "render_layers"
+path = "examples/render_layers.rs"

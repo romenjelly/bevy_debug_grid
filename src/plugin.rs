@@ -79,7 +79,8 @@ impl<T: Component> Plugin for TrackedDebugGridPlugin<T> {
                 main_grid_mesher_tracked,
                 sub_grid_mesher,
                 grid_axis_mesher,
-                floor_grid_updater::<T>,
+                tracked_grid_updater::<T>,
+                custom_tracked_grid_updater,
             ))
             .add_systems(Update, (
                 despawn_children_upon_removal::<Grid, GridChild>,

@@ -186,10 +186,14 @@ impl Default for GridAxis {
 pub struct GridAxisChild;
 
 /// Marks a grid as "tracked", meaning it will move with the main camera
+/// 
+/// Note: A tracked grid should not be parented to a moving entity.
 #[derive(Component, Clone, Debug, Default)]
 pub struct TrackedGrid {
     /// The axis on which the grid will be tracked
     pub alignment: GridAlignment,
     /// The offset the grid has in relation to its tracking axis
     pub offset: f32,
+    /// Entity to be tracked instead of the plugin's generic component
+    pub tracking_override: Option<Entity>,
 }
