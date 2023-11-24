@@ -193,7 +193,6 @@ fn main() {
 }
 ```
 
-Tracked grids will now track alongside the entity which has the `MainCamera` component.
 In the above example, tracked grids will now track alongside the entity which has the `MainCamera` component.
 
 #### Custom Tracking Using Entity Overrides
