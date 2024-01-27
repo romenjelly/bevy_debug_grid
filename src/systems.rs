@@ -3,6 +3,7 @@
 use bevy::prelude::*;
 use bevy::render::render_resource::PrimitiveTopology;
 use bevy::render::view::RenderLayers;
+use bevy::pbr::NotShadowCaster;
 use bevy::utils::HashMap;
 
 use crate::*;
@@ -83,6 +84,7 @@ pub fn main_grid_mesher_untracked(
             let mut commands = children.spawn((
                 GridChild,
                 meshes.add(mesh),
+                NotShadowCaster,
                 TransformBundle::default(),
                 VisibilityBundle::default(),
                 simple_materials.add(SimpleLineMaterial::new(
@@ -123,6 +125,7 @@ pub fn main_grid_mesher_tracked(
             let mut commands = children.spawn((
                 GridChild,
                 meshes.add(mesh),
+                NotShadowCaster,
                 TransformBundle::default(),
                 VisibilityBundle::default(),
                 clipped_materials.add(ClippedLineMaterial::new(
@@ -144,6 +147,7 @@ pub fn main_grid_mesher_tracked(
                 let mut commands = children.spawn((
                     GridChild,
                     meshes.add(axis_mesh),
+                    NotShadowCaster,
                     GlobalTransform::default(),
                     VisibilityBundle::default(),
                     clipped_materials.add(ClippedLineMaterial::new(
@@ -198,6 +202,7 @@ pub fn sub_grid_mesher(
             let mut child_commands = children.spawn((
                 SubGridChild,
                 meshes.add(mesh),
+                NotShadowCaster,
                 TransformBundle::from_transform(Transform::from_translation(
                     alignment.shift_vec3(-Vec3::Y * SUB_GRID_VERTICAL_OFFSET),
                 )),
@@ -253,6 +258,7 @@ pub fn grid_axis_mesher(
                     let mut commands = children.spawn((
                         GridAxisChild,
                         meshes.add(mesh),
+                        NotShadowCaster,
                         TransformBundle::default(),
                         VisibilityBundle::default(),
                         simple_materials.add(SimpleLineMaterial::new(
@@ -278,6 +284,7 @@ pub fn grid_axis_mesher(
                 let mut commands = children.spawn((
                     GridAxisChild,
                     meshes.add(mesh),
+                    NotShadowCaster,
                     TransformBundle::default(),
                     VisibilityBundle::default(),
                     simple_materials.add(SimpleLineMaterial::new(
