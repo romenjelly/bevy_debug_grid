@@ -2,7 +2,6 @@ use bevy::prelude::*;
 use bevy::reflect::TypePath;
 use bevy::{
     pbr::{MaterialPipeline, MaterialPipelineKey},
-    reflect::TypeUuid,
     render::{
         mesh::MeshVertexBufferLayout,
         render_asset::RenderAssets,
@@ -20,8 +19,7 @@ use crate::{GridAlignment, GridAxis};
 
 /// Material used for tracked grids.
 /// It will clip beyond a certain distance from the camera, creating the illusion of an infinite grid.
-#[derive(AsBindGroup, Asset, TypePath, Debug, Clone, TypeUuid)]
-#[uuid = "27cb223e-eb7d-4de3-859f-cb070f13dad3"]
+#[derive(AsBindGroup, Asset, TypePath, Debug, Clone)]
 #[uniform(0, ClippedLineMaterialUniform)]
 pub struct ClippedLineMaterial {
     pub color: Color,
@@ -72,7 +70,10 @@ pub struct ClippedLineMaterialUniform {
 }
 
 impl AsBindGroupShaderType<ClippedLineMaterialUniform> for ClippedLineMaterial {
-    fn as_bind_group_shader_type(&self, _images: &RenderAssets<Image>) -> ClippedLineMaterialUniform {
+    fn as_bind_group_shader_type(
+        &self,
+        _images: &RenderAssets<Image>,
+    ) -> ClippedLineMaterialUniform {
         ClippedLineMaterialUniform {
             color: self.color,
             alignment: self.alignment.into(),
@@ -109,8 +110,7 @@ impl Material for ClippedLineMaterial {
 pub const SIMPLE_LINE_SHADER_HANDLE: Handle<Shader> = Handle::weak_from_u128(14181856097290587572);
 
 /// Simple line material with no functionality beyond assigning a color
-#[derive(Default, Asset, AsBindGroup, TypeUuid, TypePath, Debug, Clone)]
-#[uuid = "2fbc30f9-03f4-46da-ac0d-de48e7392217"]
+#[derive(Default, Asset, AsBindGroup, TypePath, Debug, Clone)]
 pub struct SimpleLineMaterial {
     #[uniform(0)]
     pub color: Color,
@@ -118,11 +118,8 @@ pub struct SimpleLineMaterial {
 }
 
 impl SimpleLineMaterial {
-    pub fn new(color: Color, alpha_mode: AlphaMode) -> Self {
-        Self {
-            color,
-            alpha_mode,
-        }
+    pub const fn new(color: Color, alpha_mode: AlphaMode) -> Self {
+        Self { color, alpha_mode }
     }
 }
 

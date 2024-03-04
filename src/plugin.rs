@@ -1,6 +1,6 @@
-use std::marker::PhantomData;
-use bevy::prelude::*;
 use bevy::asset::load_internal_asset;
+use bevy::prelude::*;
+use std::marker::PhantomData;
 
 use crate::*;
 
@@ -32,7 +32,7 @@ pub struct TrackedDebugGridPlugin<T: Component> {
 
 impl<T: Component> TrackedDebugGridPlugin<T> {
     /// Adds the plugin along with a default floor grid
-    pub fn with_floor_grid() -> Self {
+    pub const fn with_floor_grid() -> Self {
         Self {
             spawn_floor_grid: true,
             _phantom: PhantomData,
@@ -40,7 +40,7 @@ impl<T: Component> TrackedDebugGridPlugin<T> {
     }
 
     /// Adds the plugin without spawning a default floor grid
-    pub fn without_floor_grid() -> Self {
+    pub const fn without_floor_grid() -> Self {
         Self {
             spawn_floor_grid: false,
             _phantom: PhantomData,
@@ -69,27 +69,31 @@ impl<T: Component> Plugin for TrackedDebugGridPlugin<T> {
             Shader::from_wgsl
         );
 
-        app
-            .add_plugins((
-                MaterialPlugin::<SimpleLineMaterial>::default(),
-                MaterialPlugin::<ClippedLineMaterial>::default(),
-            ))
-            .add_systems(Update, (
+        app.add_plugins((
+            MaterialPlugin::<SimpleLineMaterial>::default(),
+            MaterialPlugin::<ClippedLineMaterial>::default(),
+        ))
+        .add_systems(
+            Update,
+            (
                 main_grid_mesher_untracked,
                 main_grid_mesher_tracked,
                 sub_grid_mesher,
                 grid_axis_mesher,
                 tracked_grid_updater::<T>,
                 custom_tracked_grid_updater,
-            ))
-            .add_systems(Update, (
+            ),
+        )
+        .add_systems(
+            Update,
+            (
                 despawn_children_upon_removal::<Grid, GridChild>,
                 despawn_children_upon_removal::<Grid, SubGridChild>,
                 despawn_children_upon_removal::<Grid, GridAxisChild>,
                 despawn_children_upon_removal::<SubGrid, SubGridChild>,
                 despawn_children_upon_removal::<GridAxis, GridAxisChild>,
-            ))
-            ;
+            ),
+        );
         if self.spawn_floor_grid {
             app.add_systems(Startup, spawn_floor_grid);
         }

@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use bevy_spectator::*;
 use bevy_debug_grid::*;
+use bevy_spectator::*;
 
 fn main() {
     App::new()
@@ -9,20 +9,12 @@ fn main() {
             SpectatorPlugin,
             DebugGridPlugin::with_floor_grid(),
         ))
-        .add_systems(Startup, (
-            spawn_camera,
-            default_cube,
-        ))
+        .add_systems(Startup, (spawn_camera, default_cube))
         .run();
 }
 
-fn spawn_camera(
-    mut commands: Commands,
-) {
-    commands.spawn((
-        Camera3dBundle::default(),
-        Spectator,
-    ));
+fn spawn_camera(mut commands: Commands) {
+    commands.spawn((Camera3dBundle::default(), Spectator));
 }
 
 fn default_cube(
@@ -32,8 +24,8 @@ fn default_cube(
 ) {
     // Cube
     commands.spawn(PbrBundle {
-        mesh: meshes.add(shape::Cube::new(1.0_f32).into()),
-        material: materials.add(Color::WHITE.into()),
+        mesh: meshes.add(Cuboid::new(1.0_f32, 1.0_f32, 1.0_f32)),
+        material: materials.add(StandardMaterial::from(Color::WHITE)),
         transform: Transform::from_xyz(0.0_f32, 0.5_f32, 0.0_f32),
         ..default()
     });
