@@ -83,7 +83,6 @@ fn setup(
     // Top render layer camera
     commands.spawn((
         Camera3dBundle {
-            camera_3d: Camera3d::default(),
             camera: Camera {
                 clear_color: ClearColorConfig::Custom(Color::GRAY),
                 order: -1,
@@ -117,7 +116,6 @@ fn setup(
     let secondary_camera_entity = commands
         .spawn((
             Camera3dBundle {
-                camera_3d: Camera3d::default(),
                 camera: Camera {
                     clear_color: ClearColorConfig::Custom(Color::GRAY),
                     order: -1,
