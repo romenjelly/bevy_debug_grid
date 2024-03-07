@@ -32,7 +32,7 @@ fn main() {
             TrackedDebugGridPlugin::<Spectator>::with_floor_grid(),
         ))
         .add_systems(Startup, setup)
-        .add_systems(Update, (floating_object,))
+        .add_systems(Update, floating_object)
         .run();
 }
 
