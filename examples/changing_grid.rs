@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use bevy_spectator::*;
 use bevy_debug_grid::*;
+use bevy_spectator::*;
 use std::f32;
 
 fn main() {
@@ -10,32 +10,25 @@ fn main() {
             SpectatorPlugin,
             DebugGridPlugin::with_floor_grid(),
         ))
-        .add_systems(Startup, (
-            spawn_camera,
-            spawn_demonstration_objects,
-        ))
-        .add_systems(Update, (
-            grid_changing_count,
-            grid_changing_spacing,
-            grid_changing_sub_count,
-            grid_changing_color,
-            grid_changing_sub_color,
-        ))
+        .add_systems(Startup, (spawn_camera, spawn_demonstration_objects))
+        .add_systems(
+            Update,
+            (
+                grid_changing_count,
+                grid_changing_spacing,
+                grid_changing_sub_count,
+                grid_changing_color,
+                grid_changing_sub_color,
+            ),
+        )
         .run();
 }
 
-fn spawn_camera(
-    mut commands: Commands,
-) {
-    commands.spawn((
-        Camera3dBundle::default(),
-        Spectator,
-    ));
+fn spawn_camera(mut commands: Commands) {
+    commands.spawn((Camera3dBundle::default(), Spectator));
 }
 
-fn spawn_demonstration_objects(
-    mut commands: Commands,
-) {
+fn spawn_demonstration_objects(mut commands: Commands) {
     let period = 4.0_f32;
     let spacing = f32::consts::TAU;
     let height_offset = f32::consts::FRAC_PI_2;
@@ -53,10 +46,7 @@ fn spawn_demonstration_objects(
             ..default()
         },
         GridChangePeriod(period),
-        GridChangingCount {
-            min: 1,
-            max: 8,
-        },
+        GridChangingCount { min: 1, max: 8 },
     ));
     // Changing spacing, green
     commands.spawn((
@@ -87,10 +77,7 @@ fn spawn_demonstration_objects(
             ..default()
         },
         GridChangePeriod(period),
-        GridChangingCount {
-            min: 1,
-            max: 8,
-        },
+        GridChangingCount { min: 1, max: 8 },
         GridChangingSpacing {
             min: 0.25_f32,
             max: 0.5_f32,
@@ -109,13 +96,10 @@ fn spawn_demonstration_objects(
         },
         SubGrid {
             count: 4,
-            color: Color::rgb(1.0_f32, 0.0_f32, 1.0_f32),  // Magenta
+            color: Color::rgb(1.0_f32, 0.0_f32, 1.0_f32), // Magenta
         },
         GridChangePeriod(period),
-        GridChangingSubCount {
-            min: 0,
-            max: 3,
-        },
+        GridChangingSubCount { min: 0, max: 3 },
     ));
     // Changing color
     commands.spawn((
@@ -176,7 +160,7 @@ fn grid_changing_count(
     time: Res<Time>,
 ) {
     for (mut grid, count, period) in query.iter_mut() {
-        let delta = count.max - count.min + 1;  // +1 To adjust for oscillation upper bound
+        let delta = count.max - count.min + 1; // +1 To adjust for oscillation upper bound
         let oscillation = period.oscillation(&time);
         grid.count = count.min + (delta as f32 * oscillation) as usize;
     }
@@ -210,7 +194,7 @@ fn grid_changing_sub_count(
     time: Res<Time>,
 ) {
     for (mut sub_grid, count, period) in query.iter_mut() {
-        let delta = count.max - count.min + 1;  // +1 To adjust for oscillation upper bound
+        let delta = count.max - count.min + 1; // +1 To adjust for oscillation upper bound
         let oscillation = period.oscillation(&time);
         sub_grid.count = count.min + (delta as f32 * oscillation) as usize;
     }

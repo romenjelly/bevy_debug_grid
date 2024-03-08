@@ -1,27 +1,19 @@
 use bevy::{
     prelude::*,
-    core_pipeline::clear_color::ClearColorConfig,
     render::{
-        camera::RenderTarget,
+        camera::{ClearColorConfig, RenderTarget},
         render_resource::{
-            Extent3d,
-            TextureDescriptor,
-            TextureDimension,
-            TextureFormat,
-            TextureUsages,
+            Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
         },
-        view::{
-            RenderLayers,
-            Layer,
-        },
+        view::{Layer, RenderLayers},
     },
 };
-use bevy_spectator::*;
 use bevy_debug_grid::*;
+use bevy_spectator::*;
 
 /**
  * This example demonstrates the usage of render layers, and custom tracking overrides for grids.
- * 
+ *
  * The setup system will spawn a cube, 1 main camera, 2 grids, and 2 secondary cameras.
  * The main camera is able to be flown around with the spectator plugin.
  * The secondary cameras both see different render layers, and a differing grid is contained on each said layer.
@@ -40,9 +32,7 @@ fn main() {
             TrackedDebugGridPlugin::<Spectator>::with_floor_grid(),
         ))
         .add_systems(Startup, setup)
-        .add_systems(Update, (
-            floating_object,
-        ))
+        .add_systems(Update, floating_object)
         .run();
 }
 
@@ -93,11 +83,8 @@ fn setup(
     // Top render layer camera
     commands.spawn((
         Camera3dBundle {
-            camera_3d: Camera3d {
-                clear_color: ClearColorConfig::Custom(Color::GRAY),
-                ..default()
-            },
             camera: Camera {
+                clear_color: ClearColorConfig::Custom(Color::GRAY),
                 order: -1,
                 target: RenderTarget::Image(top_image_handle.clone()),
                 ..default()
@@ -123,26 +110,25 @@ fn setup(
     const BOTTOM_LAYER: Layer = 2;
     let bottom_render_layer = RenderLayers::layer(BOTTOM_LAYER);
     let bottom_image_handle = create_render_texture(&mut images);
-    
+
     // Bottom render layer camera
     // The entity id is saved to later pass it to the grid tracking override
-    let secondary_camera_entity = commands.spawn((
-        Camera3dBundle {
-            camera_3d: Camera3d {
-                clear_color: ClearColorConfig::Custom(Color::GRAY),
+    let secondary_camera_entity = commands
+        .spawn((
+            Camera3dBundle {
+                camera: Camera {
+                    clear_color: ClearColorConfig::Custom(Color::GRAY),
+                    order: -1,
+                    target: RenderTarget::Image(bottom_image_handle.clone()),
+                    ..default()
+                },
+                transform: Transform::from_xyz(-4.0_f32, 2.0_f32, 4.0_f32)
+                    .looking_at(Vec3::Y, Vec3::Y),
                 ..default()
             },
-            camera: Camera {
-                order: -1,
-                target: RenderTarget::Image(bottom_image_handle.clone()),
-                ..default()
-            },
-            transform: Transform::from_xyz(-4.0_f32, 2.0_f32, 4.0_f32)
-                .looking_at(Vec3::Y, Vec3::Y),
-            ..default()
-        },
-        bottom_render_layer,
-    )).id();
+            bottom_render_layer,
+        ))
+        .id();
 
     // A tracked grid visible on the bottom render layer
     commands.spawn((
@@ -165,11 +151,11 @@ fn setup(
         TransformBundle::default(),
         bottom_render_layer,
     ));
-    
+
     // Cube in the center
     commands.spawn((
         PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0_f32 })),
+            mesh: meshes.add(Mesh::from(Cuboid::new(1.0_f32, 1.0, 1.0))),
             material: materials.add(StandardMaterial::default()),
             transform: Transform::from_xyz(0.0_f32, 0.75_f32, 0.0_f32),
             ..default()
@@ -186,44 +172,40 @@ fn setup(
     });
 
     // Main render pass camera with parented render textures
-    commands.spawn((
-        Camera3dBundle::default(),
-        Spectator,
-    )).with_children(|parent| {
-        // Top render texture, looking at a grid
-        parent.spawn(PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Cube::new(0.25_f32))),
-            material: materials.add(StandardMaterial {
-                base_color_texture: Some(top_image_handle),
-                unlit: true,
-                double_sided: true,
+    commands
+        .spawn((Camera3dBundle::default(), Spectator))
+        .with_children(|parent| {
+            // Top render texture, looking at a grid
+            parent.spawn(PbrBundle {
+                mesh: meshes.add(Mesh::from(Cuboid::new(0.25_f32, 0.25, 0.25))),
+                material: materials.add(StandardMaterial {
+                    base_color_texture: Some(top_image_handle),
+                    unlit: true,
+                    double_sided: true,
+                    ..default()
+                }),
+                transform: Transform::from_xyz(0.5_f32, 0.2_f32, -1.0_f32)
+                    .looking_at(Vec3::ZERO, Vec3::Y),
                 ..default()
-            }),
-            transform: Transform::from_xyz(0.5_f32, 0.2_f32, -1.0_f32)
-                .looking_at(Vec3::ZERO, Vec3::Y),
-            ..default()
-        });
-        // Bottom render texture, looking at a tracked grid
-        parent.spawn(PbrBundle {
-            mesh: meshes.add(Mesh::from(shape::Cube::new(0.25_f32))),
-            material: materials.add(StandardMaterial {
-                base_color_texture: Some(bottom_image_handle),
-                unlit: true,
-                double_sided: true,
+            });
+            // Bottom render texture, looking at a tracked grid
+            parent.spawn(PbrBundle {
+                mesh: meshes.add(Mesh::from(Cuboid::new(0.25_f32, 0.25, 0.25))),
+                material: materials.add(StandardMaterial {
+                    base_color_texture: Some(bottom_image_handle),
+                    unlit: true,
+                    double_sided: true,
+                    ..default()
+                }),
+                transform: Transform::from_xyz(0.5_f32, -0.2_f32, -1.0_f32)
+                    .looking_at(Vec3::ZERO, Vec3::Y),
                 ..default()
-            }),
-            transform: Transform::from_xyz(0.5_f32, -0.2_f32, -1.0_f32)
-                .looking_at(Vec3::ZERO, Vec3::Y),
-            ..default()
+            });
         });
-    });
 }
 
 // System for moving the entities with the Floating component
-fn floating_object(
-    time: Res<Time>,
-    mut query: Query<&mut Transform, With<Floating>>,
-) {
+fn floating_object(time: Res<Time>, mut query: Query<&mut Transform, With<Floating>>) {
     for mut transform in &mut query {
         transform.translation.y += (time.elapsed_seconds() * 2.0_f32).sin() * 0.004_f32;
         transform.rotate_y(time.delta_seconds() * 0.75_f32);

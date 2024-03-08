@@ -62,11 +62,11 @@ pub enum GridAlignment {
 }
 
 impl GridAlignment {
-    pub fn to_axis_vec3(&self) -> Vec3 {
+    pub const fn to_axis_vec3(&self) -> Vec3 {
         match self {
-            GridAlignment::X => Vec3::X,
-            GridAlignment::Y => Vec3::Y,
-            GridAlignment::Z => Vec3::Z,
+            Self::X => Vec3::X,
+            Self::Y => Vec3::Y,
+            Self::Z => Vec3::Z,
         }
     }
 
@@ -75,7 +75,7 @@ impl GridAlignment {
     }
 
     /// Shifts/rotates a `Vec3`'s values. Default `Y` alignment does nothing.
-    pub fn shift_vec3(&self, input: Vec3) -> Vec3 {
+    pub const fn shift_vec3(&self, input: Vec3) -> Vec3 {
         match self {
             Self::X => Vec3::new(input.y, input.z, input.x),
             Self::Y => input,
@@ -107,7 +107,7 @@ pub struct GridAxis {
 impl GridAxis {
     /// An empty grid axis, does nothing.
     /// Use for later mutation or debug.
-    pub fn new_empty() -> Self {
+    pub const fn new_empty() -> Self {
         Self {
             x: None,
             y: None,
@@ -117,7 +117,7 @@ impl GridAxis {
 
     /// Creates a grid axis with each axis having a color.
     /// Red for X, green for Y, and blue for Z.
-    pub fn new_rgb() -> Self {
+    pub const fn new_rgb() -> Self {
         Self {
             x: Some(Color::RED),
             y: Some(Color::GREEN),
@@ -158,15 +158,12 @@ impl GridAxis {
     }
 
     /// Returns the default axis for a grid
-    pub fn default_axis() -> [GridAlignment; 2] {
-        [
-            GridAlignment::X,
-            GridAlignment::Z,
-        ]
+    pub const fn default_axis() -> [GridAlignment; 2] {
+        [GridAlignment::X, GridAlignment::Z]
     }
 
     /// Returns an axis color by grid alignment, if such a color is configured per that axis
-    pub fn get_by_alignment(&self, alignment: &GridAlignment) -> Option<Color> {
+    pub const fn get_by_alignment(&self, alignment: &GridAlignment) -> Option<Color> {
         match alignment {
             GridAlignment::X => self.x,
             GridAlignment::Y => self.y,
@@ -186,7 +183,7 @@ impl Default for GridAxis {
 pub struct GridAxisChild;
 
 /// Marks a grid as "tracked", meaning it will move with the main camera
-/// 
+///
 /// Note: A tracked grid should not be parented to a moving entity.
 #[derive(Component, Clone, Debug, Default)]
 pub struct TrackedGrid {

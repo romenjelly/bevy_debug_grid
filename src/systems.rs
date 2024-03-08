@@ -1,9 +1,10 @@
 #![allow(clippy::type_complexity)]
 
+use bevy::pbr::NotShadowCaster;
 use bevy::prelude::*;
+use bevy::render::render_asset::RenderAssetUsages;
 use bevy::render::render_resource::PrimitiveTopology;
 use bevy::render::view::RenderLayers;
-use bevy::pbr::NotShadowCaster;
 use bevy::utils::HashMap;
 
 use crate::*;
@@ -66,7 +67,10 @@ pub fn main_grid_mesher_untracked(
     mut commands: Commands,
     query_parent: Query<
         (Entity, &Grid, Option<&RenderLayers>, Option<&Children>),
-        (Or<(Changed<Grid>, Changed<RenderLayers>)>, Without<TrackedGrid>),
+        (
+            Or<(Changed<Grid>, Changed<RenderLayers>)>,
+            Without<TrackedGrid>,
+        ),
     >,
     query_children: Query<Entity, With<GridChild>>,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -74,7 +78,7 @@ pub fn main_grid_mesher_untracked(
 ) {
     for (entity, grid, render_layers, children) in query_parent.iter() {
         let (vertices, _) = main_grid_vertices_and_size(grid, &GridAlignment::default());
-        let mut mesh = Mesh::new(PrimitiveTopology::LineList);
+        let mut mesh = Mesh::new(PrimitiveTopology::LineList, RenderAssetUsages::all());
         mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
 
         if let Some(children) = children {
@@ -87,10 +91,7 @@ pub fn main_grid_mesher_untracked(
                 NotShadowCaster,
                 TransformBundle::default(),
                 VisibilityBundle::default(),
-                simple_materials.add(SimpleLineMaterial::new(
-                    grid.color,
-                    grid.alpha_mode,
-                )),
+                simple_materials.add(SimpleLineMaterial::new(grid.color, grid.alpha_mode)),
             ));
             if let Some(render_layers) = render_layers {
                 commands.insert(*render_layers);
@@ -103,8 +104,20 @@ pub fn main_grid_mesher_untracked(
 pub fn main_grid_mesher_tracked(
     mut commands: Commands,
     query_parent: Query<
-        (Entity, &Grid, &TrackedGrid, Option<&GridAxis>, Option<&RenderLayers>, Option<&Children>),
-        Or<(Changed<Grid>, Changed<TrackedGrid>, Changed<GridAxis>, Changed<RenderLayers>)>,
+        (
+            Entity,
+            &Grid,
+            &TrackedGrid,
+            Option<&GridAxis>,
+            Option<&RenderLayers>,
+            Option<&Children>,
+        ),
+        Or<(
+            Changed<Grid>,
+            Changed<TrackedGrid>,
+            Changed<GridAxis>,
+            Changed<RenderLayers>,
+        )>,
     >,
     query_children: Query<Entity, With<GridChild>>,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -113,9 +126,12 @@ pub fn main_grid_mesher_tracked(
     for (entity, grid, tracked, axis, render_layers, children) in query_parent.iter() {
         let (mut vertices, size) = main_grid_vertices_and_size(grid, &tracked.alignment);
         for alignment in [GridAlignment::X, GridAlignment::Z] {
-            vertices.extend(&GridAxis::create_single_axis(size, alignment).map(|vertex| tracked.alignment.shift_vec3(vertex)));
+            vertices.extend(
+                &GridAxis::create_single_axis(size, alignment)
+                    .map(|vertex| tracked.alignment.shift_vec3(vertex)),
+            );
         }
-        let mut mesh = Mesh::new(PrimitiveTopology::LineList);
+        let mut mesh = Mesh::new(PrimitiveTopology::LineList, RenderAssetUsages::all());
         mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
 
         if let Some(children) = children {
@@ -142,7 +158,8 @@ pub fn main_grid_mesher_tracked(
             }
             if let Some(color) = axis.and_then(|axis| axis.get_by_alignment(&tracked.alignment)) {
                 let vertices = GridAxis::create_single_axis(size, tracked.alignment).to_vec();
-                let mut axis_mesh = Mesh::new(PrimitiveTopology::LineList);
+                let mut axis_mesh =
+                    Mesh::new(PrimitiveTopology::LineList, RenderAssetUsages::all());
                 axis_mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
                 let mut commands = children.spawn((
                     GridChild,
@@ -171,8 +188,20 @@ pub fn main_grid_mesher_tracked(
 pub fn sub_grid_mesher(
     mut commands: Commands,
     query_parent: Query<
-        (Entity, &Grid, &SubGrid, Option<&TrackedGrid>, Option<&RenderLayers>, Option<&Children>),
-        Or<(Changed<Grid>, Changed<SubGrid>, Changed<TrackedGrid>, Changed<RenderLayers>)>,
+        (
+            Entity,
+            &Grid,
+            &SubGrid,
+            Option<&TrackedGrid>,
+            Option<&RenderLayers>,
+            Option<&Children>,
+        ),
+        Or<(
+            Changed<Grid>,
+            Changed<SubGrid>,
+            Changed<TrackedGrid>,
+            Changed<RenderLayers>,
+        )>,
     >,
     query_children: Query<Entity, With<SubGridChild>>,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -183,16 +212,18 @@ pub fn sub_grid_mesher(
         let size = grid.count as f32 * grid.spacing;
         let sub_spacing = grid.spacing / (sub_grid.count + 1) as f32;
 
-        let alignment = tracked.map(|tracked| tracked.alignment).unwrap_or(GridAlignment::default());
+        let alignment = tracked
+            .map(|tracked| tracked.alignment)
+            .unwrap_or_else(GridAlignment::default);
         let vertices = (0..grid.count)
             .flat_map(|offset| (0..sub_grid.count).map(move |sub_offset| (offset, sub_offset)))
             .map(|(offset, sub_offset)| {
-                offset as f32 * grid.spacing + sub_spacing + sub_offset as f32 * sub_spacing
+                (sub_offset as f32).mul_add(sub_spacing, offset as f32 * grid.spacing + sub_spacing)
             })
             .flat_map(|offset| line_vertices(size, offset, SUB_GRID_VERTICAL_OFFSET))
             .map(|vertex| alignment.shift_vec3(vertex))
             .collect::<Vec<_>>();
-        let mut mesh = Mesh::new(PrimitiveTopology::LineList);
+        let mut mesh = Mesh::new(PrimitiveTopology::LineList, RenderAssetUsages::all());
         mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
 
         if let Some(children) = children {
@@ -218,10 +249,9 @@ pub fn sub_grid_mesher(
                     None,
                 )));
             } else {
-                child_commands.insert(simple_materials.add(SimpleLineMaterial::new(
-                    sub_grid.color,
-                    grid.alpha_mode,
-                )));
+                child_commands.insert(
+                    simple_materials.add(SimpleLineMaterial::new(sub_grid.color, grid.alpha_mode)),
+                );
             }
             if let Some(render_layers) = render_layers {
                 child_commands.insert(*render_layers);
@@ -234,8 +264,17 @@ pub fn sub_grid_mesher(
 pub fn grid_axis_mesher(
     mut commands: Commands,
     query_parent: Query<
-        (Entity, &Grid, Option<&GridAxis>, Option<&RenderLayers>, Option<&Children>),
-        (Or<(Changed<Grid>, Changed<GridAxis>, Changed<RenderLayers>)>, Without<TrackedGrid>),
+        (
+            Entity,
+            &Grid,
+            Option<&GridAxis>,
+            Option<&RenderLayers>,
+            Option<&Children>,
+        ),
+        (
+            Or<(Changed<Grid>, Changed<GridAxis>, Changed<RenderLayers>)>,
+            Without<TrackedGrid>,
+        ),
     >,
     query_children: Query<Entity, With<GridAxisChild>>,
     mut meshes: ResMut<Assets<Mesh>>,
@@ -253,18 +292,18 @@ pub fn grid_axis_mesher(
                 let (used, unused) = axis.create_axis();
                 common_axis.extend(&unused);
                 for (alignment, color) in used {
-                    let mut mesh = Mesh::new(PrimitiveTopology::LineList);
-                    mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, GridAxis::create_single_axis(size, alignment).to_vec());
+                    let mut mesh = Mesh::new(PrimitiveTopology::LineList, RenderAssetUsages::all());
+                    mesh.insert_attribute(
+                        Mesh::ATTRIBUTE_POSITION,
+                        GridAxis::create_single_axis(size, alignment).to_vec(),
+                    );
                     let mut commands = children.spawn((
                         GridAxisChild,
                         meshes.add(mesh),
                         NotShadowCaster,
                         TransformBundle::default(),
                         VisibilityBundle::default(),
-                        simple_materials.add(SimpleLineMaterial::new(
-                            color,
-                            grid.alpha_mode,
-                        )),
+                        simple_materials.add(SimpleLineMaterial::new(color, grid.alpha_mode)),
                     ));
                     if let Some(render_layers) = render_layers {
                         commands.insert(*render_layers);
@@ -279,7 +318,7 @@ pub fn grid_axis_mesher(
                     .into_iter()
                     .flat_map(|alignment| GridAxis::create_single_axis(size, alignment))
                     .collect::<Vec<_>>();
-                let mut mesh = Mesh::new(PrimitiveTopology::LineList);
+                let mut mesh = Mesh::new(PrimitiveTopology::LineList, RenderAssetUsages::all());
                 mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
                 let mut commands = children.spawn((
                     GridAxisChild,
@@ -287,10 +326,7 @@ pub fn grid_axis_mesher(
                     NotShadowCaster,
                     TransformBundle::default(),
                     VisibilityBundle::default(),
-                    simple_materials.add(SimpleLineMaterial::new(
-                        grid.color,
-                        grid.alpha_mode,
-                    )),
+                    simple_materials.add(SimpleLineMaterial::new(grid.color, grid.alpha_mode)),
                 ));
                 if let Some(render_layers) = render_layers {
                     commands.insert(*render_layers);
@@ -306,9 +342,13 @@ pub fn tracked_grid_updater<T: Component>(
     mut floor_grid_query: Query<(&mut Transform, &Grid, &TrackedGrid)>,
     tracked_transform_query: Query<&GlobalTransform, (With<T>, Without<TrackedGrid>)>,
 ) {
-    let Ok(tracked_transform) = tracked_transform_query.get_single() else { return };
+    let Ok(tracked_transform) = tracked_transform_query.get_single() else {
+        return;
+    };
     for (mut grid_transform, grid, tracked) in floor_grid_query.iter_mut() {
-        if tracked.tracking_override.is_some() { continue };
+        if tracked.tracking_override.is_some() {
+            continue;
+        };
         let alignment = tracked.alignment.to_inverted_axis_vec3();
         let translation = tracked_transform.translation() * alignment;
         let offset = tracked.alignment.to_axis_vec3() * tracked.offset;
@@ -323,8 +363,12 @@ pub fn custom_tracked_grid_updater(
     tracked_transform_query: Query<&GlobalTransform>,
 ) {
     for (mut grid_transform, grid, tracked) in custom_tracked_grid_query.iter_mut() {
-        let Some(entity) = tracked.tracking_override else { continue };
-        let Ok(tracked_transform) = tracked_transform_query.get(entity) else { continue };
+        let Some(entity) = tracked.tracking_override else {
+            continue;
+        };
+        let Ok(tracked_transform) = tracked_transform_query.get(entity) else {
+            continue;
+        };
         let alignment = tracked.alignment.to_inverted_axis_vec3();
         let translation = tracked_transform.translation() * alignment;
         let offset = tracked.alignment.to_axis_vec3() * tracked.offset;
@@ -333,22 +377,26 @@ pub fn custom_tracked_grid_updater(
 }
 
 /// Despawns children with a marker component upon the removal of their parent
-pub fn despawn_children_upon_removal<
-    RemovedParent: Component,
-    ChildMarker: Component,
->(
+pub fn despawn_children_upon_removal<RemovedParent: Component, ChildMarker: Component>(
     mut removed: RemovedComponents<RemovedParent>,
     query: Query<(&Parent, Entity), With<ChildMarker>>,
     mut commands: Commands,
 ) {
-    if removed.is_empty() { return }
+    if removed.is_empty() {
+        return;
+    }
     let mut parent_to_child_map: HashMap<Entity, Vec<Entity>> = HashMap::new();
     for (parent, child) in query.iter() {
-        parent_to_child_map.entry(parent.get())
+        parent_to_child_map
+            .entry(parent.get())
             .and_modify(|children| children.push(child))
             .or_insert_with(|| vec![child]);
     }
-    for entity in removed.read().filter_map(|entity| parent_to_child_map.get(&entity)).flatten() {
+    for entity in removed
+        .read()
+        .filter_map(|entity| parent_to_child_map.get(&entity))
+        .flatten()
+    {
         commands.entity(*entity).despawn();
     }
 }
