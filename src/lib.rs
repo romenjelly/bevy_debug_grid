@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, color::palettes::tailwind};
 
 mod plugin;
 pub mod rendering;
@@ -7,8 +7,6 @@ pub mod systems;
 pub use plugin::*;
 use rendering::*;
 use systems::*;
-
-pub const DEFAULT_GRID_ALPHA: f32 = 0.5_f32;
 
 /// The main grid component
 #[derive(Component, Clone, Debug)]
@@ -23,12 +21,17 @@ pub struct Grid {
     pub alpha_mode: AlphaMode,
 }
 
+impl Grid {
+    pub const DEFAULT_SRGBA: Srgba = tailwind::GRAY_400;
+    pub const DEFAULT_ALPHA: f32 = 0.5_f32;
+}
+
 impl Default for Grid {
     fn default() -> Self {
         Self {
             spacing: 0.25_f32,
             count: 8,
-            color: Color::SILVER,
+            color: Color::Srgba(Self::DEFAULT_SRGBA.with_alpha(Self::DEFAULT_ALPHA)),
             alpha_mode: AlphaMode::Blend,
         }
     }
@@ -46,6 +49,19 @@ pub struct SubGrid {
     pub count: usize,
     /// Line color
     pub color: Color,
+}
+
+impl SubGrid {
+    pub const DEFAULT_SRGBA: Srgba = tailwind::GRAY_500;
+}
+
+impl Default for SubGrid {
+    fn default() -> Self {
+        Self {
+            count: 9,
+            color: Color::Srgba(Self::DEFAULT_SRGBA.with_alpha(Grid::DEFAULT_ALPHA)),
+        }
+    }
 }
 
 /// Marker component to determine children spawned by a `SubGrid`
@@ -119,9 +135,9 @@ impl GridAxis {
     /// Red for X, green for Y, and blue for Z.
     pub const fn new_rgb() -> Self {
         Self {
-            x: Some(Color::RED),
-            y: Some(Color::GREEN),
-            z: Some(Color::BLUE),
+            x: Some(Color::Srgba(tailwind::RED_500)),
+            y: Some(Color::Srgba(tailwind::GREEN_500)),
+            z: Some(Color::Srgba(tailwind::BLUE_500)),
         }
     }
 

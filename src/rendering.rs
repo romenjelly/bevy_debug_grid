@@ -1,9 +1,10 @@
-use bevy::prelude::*;
-use bevy::reflect::TypePath;
 use bevy::{
+    prelude::*,
+    reflect::TypePath,
     pbr::{MaterialPipeline, MaterialPipelineKey},
     render::{
-        mesh::MeshVertexBufferLayout,
+        texture::GpuImage,
+        mesh::MeshVertexBufferLayoutRef,
         render_asset::RenderAssets,
         render_resource::{
             AsBindGroup, AsBindGroupShaderType, PolygonMode, RenderPipelineDescriptor, ShaderRef,
@@ -60,28 +61,28 @@ impl ClippedLineMaterial {
 /// Uniform for the `ClippedLineMaterial`
 #[derive(Clone, Default, ShaderType)]
 pub struct ClippedLineMaterialUniform {
-    pub color: Color,
+    pub color: LinearRgba,
     pub alignment: Vec3,
     pub radius: f32,
     pub offset: f32,
-    pub x_axis_color: Color,
-    pub y_axis_color: Color,
-    pub z_axis_color: Color,
+    pub x_axis_color: LinearRgba,
+    pub y_axis_color: LinearRgba,
+    pub z_axis_color: LinearRgba,
 }
 
 impl AsBindGroupShaderType<ClippedLineMaterialUniform> for ClippedLineMaterial {
     fn as_bind_group_shader_type(
         &self,
-        _images: &RenderAssets<Image>,
+        _images: &RenderAssets<GpuImage>,
     ) -> ClippedLineMaterialUniform {
         ClippedLineMaterialUniform {
-            color: self.color,
+            color: self.color.into(),
             alignment: self.alignment.into(),
             radius: self.radius,
             offset: self.offset,
-            x_axis_color: self.x_axis_color,
-            y_axis_color: self.y_axis_color,
-            z_axis_color: self.z_axis_color,
+            x_axis_color: self.x_axis_color.into(),
+            y_axis_color: self.y_axis_color.into(),
+            z_axis_color: self.z_axis_color.into(),
         }
     }
 }
@@ -98,7 +99,7 @@ impl Material for ClippedLineMaterial {
     fn specialize(
         _pipeline: &MaterialPipeline<Self>,
         descriptor: &mut RenderPipelineDescriptor,
-        _layout: &MeshVertexBufferLayout,
+        _layout: &MeshVertexBufferLayoutRef,
         _key: MaterialPipelineKey<Self>,
     ) -> Result<(), SpecializedMeshPipelineError> {
         descriptor.primitive.polygon_mode = PolygonMode::Line;
@@ -113,13 +114,27 @@ pub const SIMPLE_LINE_SHADER_HANDLE: Handle<Shader> = Handle::weak_from_u128(141
 #[derive(Default, Asset, AsBindGroup, TypePath, Debug, Clone)]
 pub struct SimpleLineMaterial {
     #[uniform(0)]
-    pub color: Color,
+    pub color: LinearRgba,
     pub alpha_mode: AlphaMode,
 }
 
 impl SimpleLineMaterial {
-    pub const fn new(color: Color, alpha_mode: AlphaMode) -> Self {
+    /// Construct a `SimpleLineMaterial` from a `LinearRgba` and an `AlphaMode`
+    pub const fn from_linear_rgba(color: LinearRgba, alpha_mode: AlphaMode) -> Self {
         Self { color, alpha_mode }
+    }
+
+    /// Construct a `SimpleLineMaterial` from a `Color` and an `AlphaMode`
+    pub fn from_color(color: Color, alpha_mode: AlphaMode) -> Self {
+        Self {
+            color: color.into(),
+            alpha_mode,
+        }
+    }
+
+    /// Set the color using a `Color` instead of an `LinearRgba`
+    pub fn set_color(&mut self, color: Color) {
+        self.color = color.into();
     }
 }
 
@@ -135,7 +150,7 @@ impl Material for SimpleLineMaterial {
     fn specialize(
         _pipeline: &MaterialPipeline<Self>,
         descriptor: &mut RenderPipelineDescriptor,
-        _layout: &MeshVertexBufferLayout,
+        _layout: &MeshVertexBufferLayoutRef,
         _key: MaterialPipelineKey<Self>,
     ) -> Result<(), SpecializedMeshPipelineError> {
         descriptor.primitive.polygon_mode = PolygonMode::Line;

@@ -91,10 +91,10 @@ pub fn main_grid_mesher_untracked(
                 NotShadowCaster,
                 TransformBundle::default(),
                 VisibilityBundle::default(),
-                simple_materials.add(SimpleLineMaterial::new(grid.color, grid.alpha_mode)),
+                simple_materials.add(SimpleLineMaterial::from_color(grid.color, grid.alpha_mode)),
             ));
             if let Some(render_layers) = render_layers {
-                commands.insert(*render_layers);
+                commands.insert(render_layers.clone());
             }
         });
     }
@@ -154,7 +154,7 @@ pub fn main_grid_mesher_tracked(
                 )),
             ));
             if let Some(render_layers) = render_layers {
-                commands.insert(*render_layers);
+                commands.insert(render_layers.clone());
             }
             if let Some(color) = axis.and_then(|axis| axis.get_by_alignment(&tracked.alignment)) {
                 let vertices = GridAxis::create_single_axis(size, tracked.alignment).to_vec();
@@ -177,7 +177,7 @@ pub fn main_grid_mesher_tracked(
                     )),
                 ));
                 if let Some(render_layers) = render_layers {
-                    commands.insert(*render_layers);
+                    commands.insert(render_layers.clone());
                 }
             }
         });
@@ -250,11 +250,11 @@ pub fn sub_grid_mesher(
                 )));
             } else {
                 child_commands.insert(
-                    simple_materials.add(SimpleLineMaterial::new(sub_grid.color, grid.alpha_mode)),
+                    simple_materials.add(SimpleLineMaterial::from_color(sub_grid.color, grid.alpha_mode)),
                 );
             }
             if let Some(render_layers) = render_layers {
-                child_commands.insert(*render_layers);
+                child_commands.insert(render_layers.clone());
             }
         });
     }
@@ -303,10 +303,10 @@ pub fn grid_axis_mesher(
                         NotShadowCaster,
                         TransformBundle::default(),
                         VisibilityBundle::default(),
-                        simple_materials.add(SimpleLineMaterial::new(color, grid.alpha_mode)),
+                        simple_materials.add(SimpleLineMaterial::from_color(color, grid.alpha_mode)),
                     ));
                     if let Some(render_layers) = render_layers {
-                        commands.insert(*render_layers);
+                        commands.insert(render_layers.clone());
                     }
                 }
             } else {
@@ -326,10 +326,10 @@ pub fn grid_axis_mesher(
                     NotShadowCaster,
                     TransformBundle::default(),
                     VisibilityBundle::default(),
-                    simple_materials.add(SimpleLineMaterial::new(grid.color, grid.alpha_mode)),
+                    simple_materials.add(SimpleLineMaterial::from_color(grid.color, grid.alpha_mode)),
                 ));
                 if let Some(render_layers) = render_layers {
-                    commands.insert(*render_layers);
+                    commands.insert(render_layers.clone());
                 }
             }
         });

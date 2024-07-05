@@ -12,15 +12,15 @@ exclude = [
 ]
 
 [dependencies]
-bevy = { version = "0.13", default-features = false, features = [
+bevy = { version = "0.14", default-features = false, features = [
     "bevy_render",
     "bevy_pbr",
     "bevy_asset",
 ] }
 
 [dev-dependencies]
-bevy = "0.13"
-bevy_spectator = "0.5"
+bevy = "0.14"
+bevy_spectator = "0.6"
 
 [[example]]
 name = "default_cube"

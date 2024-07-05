@@ -13,7 +13,7 @@ To install this plugin, add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_debug_grid = "0.5"
+bevy_debug_grid = "0.6"
 ```
 
 ## Setup
@@ -35,14 +35,13 @@ fn main() {
 }
 ```
 
-It is also possible to avoid spawning a default floor grid by doing `.add_plugins(DebugGridPlugin::without_floor_grid())`
+It is also possible to avoid spawning a default floor grid by adding the `DebugGridPlugin::without_floor_grid()` plugin.
 
 ## Examples
 
 Several examples are provided, they can be launched by cloning this repository and running `cargo run --example <example name>`
 
-All examples use the [`bevy_spectator` camera plugin](https://github.com/JonahPlusPlus/bevy_spectator) for movement. Use the `W` `A` `S` `D`, `Shift`, `Space`, and `CTRL` keys to move. Use `Esc` to release the cursor.  
-The camera spawns at world origin, so it needs to be moved a bit to see the examples in action.
+All examples use the [`bevy_spectator` camera plugin](https://github.com/JonahPlusPlus/bevy_spectator) for movement. Use the `W` `A` `S` `D`, `Shift`, `Space`, and `CTRL` keys to move. Use `Esc` to release the cursor.
 
 Here's an exhaustive list of the provided examples:
 
@@ -64,7 +63,19 @@ This has implications regarding transforming the grid.
 - If there is no need to transform the grid separately, it can be spawned on the same level as all other components of the entity
 - If the grid needs to be transformed relative to its parent, spawn it as a child of the the entity
 
-An demonstration of this can seen by running the `moving_grid` example.
+A demonstration of this can seen by running the `moving_grid` example.
+
+### Differences with Gizmos
+
+The bevy gizmos API can draw a grid using `gizmos.grid(/* ... */)`, however, this plugin has a few distinctions and additional features:
+
+- Gizmos are an immediate-mode API, where they have to be requested to be drawn every frame 
+- Grids here are components with modifiable properties
+- Grids exist as meshes during and between frames
+- This plugin supports sub-grids and axis colors
+- This plugin supports tracked grids with alpha attenuation to create the illusion of an infinite grid
+
+For a simple enough use case, this plugin is not necessary since the gizmos API is quite powerful for most common operations.
 
 ## Features
 
@@ -80,7 +91,7 @@ commands.spawn((
         // Line count along a single axis
         count: 8,
         // Color of the lines
-        color: Color::SILVER,
+        color: Color::Srgba(tailwind::GRAY_400),
         // Alpha mode for all components
         alpha_mode: AlphaMode::Opaque,
     },
@@ -89,7 +100,7 @@ commands.spawn((
 ));
 ```
 
-The `Grid::default()` is a small silver grid with 8 lines per axis and a spacing of `0.25_f32` between them.
+The `Grid::default()` is a small gray grid with 8 lines per axis and a spacing of `0.25_f32` between them.
 
 Grids have an `alpha_mode`, which determines the alpha mode for the grid material, as well as all other related materials, such as sub-grids, and grid axis.  
 The `color` should have an alpha value for alpha modes outside of `AlphaMode::Opaque` to have a visible effect.  
@@ -107,7 +118,7 @@ commands.spawn((
         // Line count between each line of the main grid
         count: 4,
         // Line color
-        color: Color::GRAY,
+        color: Color::Srgba(tailwind::GRAY_500),
     },
     // Other components...
 ));
@@ -121,8 +132,8 @@ The `GridAxis` component allows for setting custom colors per grid axis.
 commands.spawn((
     Grid { /* ... */ },
     GridAxis {
-        x: Some(Color::RED),
-        z: Some(Color::Blue),
+        x: Some(Color::Srgba(tailwind::RED_500)),
+        z: Some(Color::Srgba(tailwind::BLUE_500)),
         // Fills the remaining axis with None
         ..default()
     },
@@ -150,7 +161,8 @@ commands.spawn((
 
 ### Custom Tracking for Grids
 
-Tracked grids have the illusion of being infinite by physically being moved next to the camera and some shader trickery. However, this can be an issue when multiple cameras are involved.
+Tracked grids have the illusion of being infinite by physically being moved next to the camera and some shader trickery.
+However, this can be an issue when multiple cameras are involved, since there is no way to know which camera to track.
 
 #### Custom Tracking Using Generics
 
@@ -237,6 +249,7 @@ Adding a `RenderLayers` component to an entity with a `Grid` will ensure that al
 
 | Bevy Version | Plugin Version |
 |:------------:|:--------------:|
+|    `0.14`    |  `0.6`         |
 |    `0.13`    |  `0.5`         |
 |    `0.12`    |  `0.3.0-0.4.1` |
 |    `0.11`    |  `0.2.0-0.2.1` |

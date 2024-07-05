@@ -1,7 +1,9 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, color::palettes::tailwind};
 use bevy_debug_grid::*;
 use bevy_spectator::*;
 use std::f32;
+
+#[allow(dead_code)]
 
 fn main() {
     App::new()
@@ -24,9 +26,16 @@ fn main() {
         .run();
 }
 
-fn spawn_camera(mut commands: Commands) {
-    commands.spawn((Camera3dBundle::default(), Spectator));
+pub fn spawn_camera(mut commands: Commands) {
+    commands.spawn((
+        Camera3dBundle {
+            transform: Transform::from_xyz(-4.0_f32, 12.0_f32, 12.0_f32).looking_at(Vec3::ZERO, Vec3::Y),
+            ..default()
+        },
+        Spectator,
+    ));
 }
+
 
 fn spawn_demonstration_objects(mut commands: Commands) {
     let period = 4.0_f32;
@@ -42,7 +51,7 @@ fn spawn_demonstration_objects(mut commands: Commands) {
         },
         VisibilityBundle::default(),
         Grid {
-            color: Color::RED,
+            color: Color::Srgba(tailwind::RED_500),
             ..default()
         },
         GridChangePeriod(period),
@@ -56,7 +65,7 @@ fn spawn_demonstration_objects(mut commands: Commands) {
         },
         VisibilityBundle::default(),
         Grid {
-            color: Color::GREEN,
+            color: Color::Srgba(tailwind::GREEN_500),
             ..default()
         },
         GridChangePeriod(period),
@@ -73,7 +82,7 @@ fn spawn_demonstration_objects(mut commands: Commands) {
         },
         VisibilityBundle::default(),
         Grid {
-            color: Color::BLUE,
+            color: Color::Srgba(tailwind::BLUE_500),
             ..default()
         },
         GridChangePeriod(period),
@@ -91,12 +100,12 @@ fn spawn_demonstration_objects(mut commands: Commands) {
         },
         VisibilityBundle::default(),
         Grid {
-            color: Color::CYAN,
+            color: Color::Srgba(tailwind::CYAN_500),
             ..default()
         },
         SubGrid {
             count: 4,
-            color: Color::rgb(1.0_f32, 0.0_f32, 1.0_f32), // Magenta
+            color: Color::Srgba(tailwind::VIOLET_500),
         },
         GridChangePeriod(period),
         GridChangingSubCount { min: 0, max: 3 },
@@ -123,7 +132,7 @@ fn spawn_demonstration_objects(mut commands: Commands) {
         },
         VisibilityBundle::default(),
         Grid {
-            color: Color::YELLOW,
+            color: Color::Srgba(tailwind::YELLOW_500),
             ..default()
         },
         SubGrid {

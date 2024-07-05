@@ -2,10 +2,12 @@ use bevy::prelude::*;
 use bevy_debug_grid::*;
 use bevy_spectator::*;
 
+#[allow(dead_code)]
+
 fn main() {
     App::new()
         .add_plugins((
-            DefaultPlugins,
+            DefaultPlugins, 
             SpectatorPlugin,
             DebugGridPlugin::with_floor_grid(),
         ))
@@ -13,8 +15,18 @@ fn main() {
         .run();
 }
 
-fn spawn_camera(mut commands: Commands) {
-    commands.spawn((Camera3dBundle::default(), Spectator));
+pub fn camera_bundle() -> impl Bundle {
+    (
+        Camera3dBundle {
+            transform: Transform::from_xyz(7.0_f32, 3.5_f32, 4.0_f32).looking_at(Vec3::Y * 0.5_f32, Vec3::Y),
+            ..default()
+        },
+        Spectator,
+    )
+}
+
+pub fn spawn_camera(mut commands: Commands) {
+    commands.spawn(camera_bundle());
 }
 
 fn default_cube(

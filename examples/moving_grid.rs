@@ -1,7 +1,9 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, color::palettes::tailwind};
 use bevy_debug_grid::*;
 use bevy_spectator::*;
 use std::f32;
+
+mod changing_grid;
 
 fn main() {
     App::new()
@@ -10,13 +12,9 @@ fn main() {
             SpectatorPlugin,
             DebugGridPlugin::with_floor_grid(),
         ))
-        .add_systems(Startup, (spawn_camera, spawn_demonstration_objects))
+        .add_systems(Startup, (changing_grid::spawn_camera, spawn_demonstration_objects))
         .add_systems(Update, (move_objects, spin_objects))
         .run();
-}
-
-fn spawn_camera(mut commands: Commands) {
-    commands.spawn((Camera3dBundle::default(), Spectator));
 }
 
 #[derive(Component)]
@@ -47,7 +45,7 @@ fn spawn_demonstration_objects(
             origin: Vec3::new(-spacing_offset, height_offset, -depth_offset),
         },
         Grid {
-            color: Color::RED,
+            color: Color::Srgba(tailwind::RED_500),
             ..default()
         },
     ));
@@ -60,7 +58,7 @@ fn spawn_demonstration_objects(
             ..default()
         },
         Grid {
-            color: Color::GREEN,
+            color: Color::Srgba(tailwind::GREEN_500),
             ..default()
         },
         Spinning,
@@ -73,7 +71,7 @@ fn spawn_demonstration_objects(
             ..default()
         },
         Grid {
-            color: Color::BLUE,
+            color: Color::Srgba(tailwind::BLUE_500),
             ..default()
         },
         Moving {
@@ -94,7 +92,7 @@ fn spawn_demonstration_objects(
                 TransformBundle::default(),
                 VisibilityBundle::default(),
                 Grid {
-                    color: Color::CYAN,
+                    color: Color::Srgba(tailwind::CYAN_500),
                     ..default()
                 },
                 Moving { origin: Vec3::ZERO },
@@ -113,7 +111,7 @@ fn spawn_demonstration_objects(
                 TransformBundle::default(),
                 VisibilityBundle::default(),
                 Grid {
-                    color: Color::rgb(1.0_f32, 0.0_f32, 1.0_f32), // Magenta
+                    color: Color::Srgba(tailwind::VIOLET_500),
                     ..default()
                 },
                 Spinning,
@@ -132,7 +130,7 @@ fn spawn_demonstration_objects(
                 TransformBundle::default(),
                 VisibilityBundle::default(),
                 Grid {
-                    color: Color::YELLOW,
+                    color: Color::Srgba(tailwind::YELLOW_500),
                     ..default()
                 },
                 Moving { origin: Vec3::ZERO },

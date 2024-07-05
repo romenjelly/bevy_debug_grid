@@ -10,13 +10,9 @@ pub fn spawn_floor_grid(mut commands: Commands) {
         Grid {
             spacing: 10.0_f32,
             count: 16,
-            color: Color::SILVER.with_a(DEFAULT_GRID_ALPHA),
-            alpha_mode: AlphaMode::Blend,
+            ..default()
         },
-        SubGrid {
-            count: 9,
-            color: Color::GRAY.with_a(DEFAULT_GRID_ALPHA),
-        },
+        SubGrid::default(),
         GridAxis::new_rgb(),
         TrackedGrid::default(),
         TransformBundle::default(),
@@ -24,7 +20,7 @@ pub fn spawn_floor_grid(mut commands: Commands) {
     ));
 }
 
-/// The plugin which allows floor grids to work
+/// The plugin which allows floor grids to work, where `T` is the component to track the floor grid to
 pub struct TrackedDebugGridPlugin<T: Component> {
     spawn_floor_grid: bool,
     _phantom: PhantomData<T>,

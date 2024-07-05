@@ -1,15 +1,17 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, color::palettes::tailwind};
 use bevy_debug_grid::*;
 use bevy_spectator::*;
 
-const COLOR_X_START: Color = Color::RED;
-const COLOR_X_END: Color = Color::CYAN;
+mod default_cube;
 
-const COLOR_Y_START: Color = Color::GREEN;
-const COLOR_Y_END: Color = Color::rgb(1.0_f32, 0.0_f32, 1.0_f32); // Magenta
+const COLOR_X_START: Srgba = tailwind::RED_500;
+const COLOR_X_END: Srgba = tailwind::CYAN_500;
 
-const COLOR_Z_START: Color = Color::BLUE;
-const COLOR_Z_END: Color = Color::YELLOW;
+const COLOR_Y_START: Srgba = tailwind::GREEN_500;
+const COLOR_Y_END: Srgba = tailwind::VIOLET_500;
+
+const COLOR_Z_START: Srgba = tailwind::BLUE_500;
+const COLOR_Z_END: Srgba = tailwind::YELLOW_500;
 
 fn main() {
     App::new()
@@ -20,14 +22,10 @@ fn main() {
         ))
         .add_systems(
             Startup,
-            (spawn_floor_grid, spawn_camera, spawn_center_sphere),
+            (spawn_floor_grid, default_cube::spawn_camera, spawn_center_sphere),
         )
         .add_systems(Update, (move_floor_grid, change_axis_color))
         .run();
-}
-
-fn spawn_camera(mut commands: Commands) {
-    commands.spawn((Camera3dBundle::default(), Spectator));
 }
 
 fn spawn_center_sphere(
@@ -48,12 +46,11 @@ fn spawn_floor_grid(mut commands: Commands) {
         Grid {
             spacing: 5.0_f32,
             count: 32,
-            color: Color::SILVER,
             ..default()
         },
         SubGrid {
             count: 4,
-            color: Color::GRAY,
+            ..default()
         },
         GridAxis::new_empty(),
         TrackedGrid {
@@ -77,9 +74,9 @@ fn move_floor_grid(mut query: Query<&mut TrackedGrid>, time: Res<Time>) {
     }
 }
 
-fn lerp_color(lhs: Color, rhs: Color, factor: f32) -> Color {
-    let subbed = Color::rgb(rhs.r() - lhs.r(), rhs.g() - lhs.g(), rhs.b() - lhs.b());
-    lhs + subbed * factor
+fn lerp_color(lhs: Srgba, rhs: Srgba, factor: f32) -> Color {
+    let subbed = Srgba::rgb(rhs.red - lhs.red, rhs.green - lhs.green, rhs.blue - lhs.blue);
+    Color::Srgba(lhs + subbed * factor)
 }
 
 fn change_axis_color(mut query: Query<&mut GridAxis, With<TrackedGrid>>, time: Res<Time>) {

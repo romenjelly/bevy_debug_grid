@@ -1,5 +1,6 @@
 use bevy::{
     prelude::*,
+    color::palettes::tailwind,
     render::{
         camera::{ClearColorConfig, RenderTarget},
         render_resource::{
@@ -10,6 +11,8 @@ use bevy::{
 };
 use bevy_debug_grid::*;
 use bevy_spectator::*;
+
+mod default_cube;
 
 /**
  * This example demonstrates the usage of render layers, and custom tracking overrides for grids.
@@ -77,14 +80,13 @@ fn setup(
 ) {
     // The render layer used for the top render texture
     const TOP_LAYER: Layer = 1;
-    let top_render_layer = RenderLayers::layer(TOP_LAYER);
     let top_image_handle = create_render_texture(&mut images);
 
     // Top render layer camera
     commands.spawn((
         Camera3dBundle {
             camera: Camera {
-                clear_color: ClearColorConfig::Custom(Color::GRAY),
+                clear_color: ClearColorConfig::Custom(Color::Srgba(tailwind::GRAY_500)),
                 order: -1,
                 target: RenderTarget::Image(top_image_handle.clone()),
                 ..default()
@@ -93,22 +95,21 @@ fn setup(
                 .looking_at(Vec3::ZERO, Vec3::Y),
             ..default()
         },
-        top_render_layer,
+        RenderLayers::layer(TOP_LAYER),
     ));
 
     // A grid visible only on the top render layer
     commands.spawn((
         Grid {
-            color: Color::ORANGE.with_a(DEFAULT_GRID_ALPHA),
+            color: Color::Srgba(tailwind::ORANGE_500.with_alpha(Grid::DEFAULT_ALPHA)),
             ..default()
         },
         VisibilityBundle::default(),
         TransformBundle::default(),
-        top_render_layer,
+        RenderLayers::layer(TOP_LAYER),
     ));
 
     const BOTTOM_LAYER: Layer = 2;
-    let bottom_render_layer = RenderLayers::layer(BOTTOM_LAYER);
     let bottom_image_handle = create_render_texture(&mut images);
 
     // Bottom render layer camera
@@ -117,7 +118,7 @@ fn setup(
         .spawn((
             Camera3dBundle {
                 camera: Camera {
-                    clear_color: ClearColorConfig::Custom(Color::GRAY),
+                    clear_color: ClearColorConfig::Custom(Color::Srgba(tailwind::GRAY_500)),
                     order: -1,
                     target: RenderTarget::Image(bottom_image_handle.clone()),
                     ..default()
@@ -126,7 +127,7 @@ fn setup(
                     .looking_at(Vec3::Y, Vec3::Y),
                 ..default()
             },
-            bottom_render_layer,
+            RenderLayers::layer(BOTTOM_LAYER),
         ))
         .id();
 
@@ -135,12 +136,12 @@ fn setup(
         Grid {
             count: 6,
             spacing: 5.0_f32,
-            color: Color::CYAN.with_a(DEFAULT_GRID_ALPHA),
+            color: Color::Srgba(tailwind::CYAN_500.with_alpha(Grid::DEFAULT_ALPHA)),
             ..default()
         },
         SubGrid {
             count: 9,
-            color: Color::WHITE.with_a(DEFAULT_GRID_ALPHA),
+            color: Color::WHITE.with_alpha(Grid::DEFAULT_ALPHA),
         },
         TrackedGrid {
             // It is tracked to the secondary camera entity instead of the entity containing a Spectator component
@@ -149,7 +150,7 @@ fn setup(
         },
         VisibilityBundle::default(),
         TransformBundle::default(),
-        bottom_render_layer,
+        RenderLayers::layer(BOTTOM_LAYER),
     ));
 
     // Cube in the center
@@ -173,7 +174,7 @@ fn setup(
 
     // Main render pass camera with parented render textures
     commands
-        .spawn((Camera3dBundle::default(), Spectator))
+        .spawn(default_cube::camera_bundle())
         .with_children(|parent| {
             // Top render texture, looking at a grid
             parent.spawn(PbrBundle {
