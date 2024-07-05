@@ -74,7 +74,7 @@ impl<T: Component> Plugin for TrackedDebugGridPlugin<T> {
             MaterialPlugin::<ClippedLineMaterial>::default(),
         ))
         .add_systems(
-            Update,
+            PreUpdate,
             (
                 main_grid_mesher_untracked,
                 main_grid_mesher_tracked,
