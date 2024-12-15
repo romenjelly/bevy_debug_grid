@@ -1,15 +1,15 @@
 use bevy::{
+    pbr::{MaterialPipeline, MaterialPipelineKey},
     prelude::*,
     reflect::TypePath,
-    pbr::{MaterialPipeline, MaterialPipelineKey},
     render::{
-        texture::GpuImage,
         mesh::MeshVertexBufferLayoutRef,
         render_asset::RenderAssets,
         render_resource::{
             AsBindGroup, AsBindGroupShaderType, PolygonMode, RenderPipelineDescriptor, ShaderRef,
             ShaderType, SpecializedMeshPipelineError,
         },
+        texture::GpuImage,
     },
 };
 

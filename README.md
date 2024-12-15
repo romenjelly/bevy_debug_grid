@@ -95,8 +95,8 @@ commands.spawn((
         // Alpha mode for all components
         alpha_mode: AlphaMode::Opaque,
     },
-    TransformBundle::default(),
-    VisibilityBundle::default(),
+    Transform::default(),
+    Visibility::default(),
 ));
 ```
 
@@ -185,7 +185,7 @@ fn spawn_main_camera(
     mut commands: Commands,
 ) {
     commands.spawn((
-        Camera3dBundle::default(),
+        Camera3d::default(),
         MainCamera,
     ));
 }
@@ -249,6 +249,7 @@ Adding a `RenderLayers` component to an entity with a `Grid` will ensure that al
 
 | Bevy Version | Plugin Version |
 |:------------:|:--------------:|
+|    `0.15`    |  `0.7`         |
 |    `0.14`    |  `0.6`         |
 |    `0.13`    |  `0.5`         |
 |    `0.12`    |  `0.3.0-0.4.1` |

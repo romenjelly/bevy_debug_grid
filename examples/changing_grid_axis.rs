@@ -11,7 +11,11 @@ fn main() {
             SpectatorPlugin,
             DebugGridPlugin::without_floor_grid(),
         ))
-        .add_systems(Startup, (default_cube::spawn_camera, spawn_demonstration_grid))
+        .add_plugins(DebugGridPlugin::without_floor_grid())
+        .add_systems(
+            Startup,
+            (default_cube::spawn_camera, spawn_demonstration_grid),
+        )
         .add_systems(Update, change_axis_color)
         .run();
 }
@@ -24,13 +28,13 @@ fn spawn_demonstration_grid(mut commands: Commands) {
         Grid::default(),
         GridAxis::new_empty(),
         ChangingAxis,
-        TransformBundle::default(),
-        VisibilityBundle::default(),
+        Transform::default(),
+        Visibility::default(),
     ));
 }
 
 fn change_axis_color(mut query: Query<&mut GridAxis, With<ChangingAxis>>, time: Res<Time>) {
-    let elapsed = time.elapsed_seconds() * 0.25_f32;
+    let elapsed = time.elapsed_secs() * 0.25_f32;
     let selected_axis = (elapsed % 4.0_f32) as usize;
     let axis_color = Some(Color::hsl(
         (elapsed % 1.0_f32) * 360.0_f32,
