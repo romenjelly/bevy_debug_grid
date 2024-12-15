@@ -16,9 +16,9 @@ const COLOR_Z_END: Srgba = tailwind::YELLOW_500;
 fn main() {
     App::new()
         .add_plugins((
-            //DefaultPlugins,
+            DefaultPlugins,
             SpectatorPlugin,
-            //DebugGridPlugin::without_floor_grid(),
+            DebugGridPlugin::without_floor_grid(),
         ))
         .add_systems(
             Startup,
