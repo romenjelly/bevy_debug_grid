@@ -7,7 +7,7 @@ use bevy_spectator::*;
 fn main() {
     App::new()
         .add_plugins((
-            DefaultPlugins, 
+            DefaultPlugins,
             SpectatorPlugin,
             DebugGridPlugin::with_floor_grid(),
         ))
@@ -17,10 +17,8 @@ fn main() {
 
 pub fn camera_bundle() -> impl Bundle {
     (
-        Camera3dBundle {
-            transform: Transform::from_xyz(7.0_f32, 3.5_f32, 4.0_f32).looking_at(Vec3::Y * 0.5_f32, Vec3::Y),
-            ..default()
-        },
+        Camera3d::default(),
+        Transform::from_xyz(7.0_f32, 3.5_f32, 4.0_f32).looking_at(Vec3::Y * 0.5_f32, Vec3::Y),
         Spectator,
     )
 }
@@ -35,16 +33,16 @@ fn default_cube(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     // Cube
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(Cuboid::new(1.0_f32, 1.0_f32, 1.0_f32)),
-        material: materials.add(StandardMaterial::from(Color::WHITE)),
-        transform: Transform::from_xyz(0.0_f32, 0.5_f32, 0.0_f32),
-        ..default()
-    });
+    commands.spawn((
+        Mesh3d(meshes.add(Cuboid::new(1.0_f32, 1.0_f32, 1.0_f32))),
+        MeshMaterial3d(materials.add(StandardMaterial::from(Color::WHITE))),
+        Transform::from_xyz(0.0_f32, 0.5_f32, 0.0_f32),
+        Visibility::default(),
+    ));
 
     // Point light
-    commands.spawn(PointLightBundle {
-        transform: Transform::from_xyz(4.0_f32, 4.0_f32, 4.0_f32),
-        ..default()
-    });
+    commands.spawn((
+        PointLight::default(),
+        Transform::from_xyz(4.0_f32, 4.0_f32, 4.0_f32),
+    ));
 }

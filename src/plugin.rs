@@ -15,8 +15,8 @@ pub fn spawn_floor_grid(mut commands: Commands) {
         SubGrid::default(),
         GridAxis::new_rgb(),
         TrackedGrid::default(),
-        TransformBundle::default(),
-        VisibilityBundle::default(),
+        Transform::default(),
+        Visibility::default(),
     ));
 }
 

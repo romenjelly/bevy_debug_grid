@@ -36,11 +36,8 @@ fn spawn_demonstration_objects(
 
     // Moving mesh, red
     commands.spawn((
-        PbrBundle {
-            mesh: meshes.add(Cuboid::default()),
-            material: materials.add(StandardMaterial::from(Color::WHITE)),
-            ..default()
-        },
+        Mesh3d(meshes.add(Cuboid::default())),
+        MeshMaterial3d(materials.add(StandardMaterial::from(Color::WHITE))),
         Moving {
             origin: Vec3::new(-spacing_offset, height_offset, -depth_offset),
         },
@@ -51,12 +48,9 @@ fn spawn_demonstration_objects(
     ));
     // Spinning mesh, green
     commands.spawn((
-        PbrBundle {
-            mesh: meshes.add(Capsule3d::default()),
-            material: materials.add(StandardMaterial::from(Color::WHITE)),
-            transform: Transform::from_xyz(0.0_f32, height_offset, -depth_offset),
-            ..default()
-        },
+        Mesh3d(meshes.add(Capsule3d::default())),
+        MeshMaterial3d(materials.add(StandardMaterial::from(Color::WHITE))),
+        Transform::from_xyz(0.0_f32, height_offset, -depth_offset),
         Grid {
             color: Color::Srgba(tailwind::GREEN_500),
             ..default()
@@ -65,11 +59,9 @@ fn spawn_demonstration_objects(
     ));
     // Moving and spinning mesh, blue
     commands.spawn((
-        PbrBundle {
-            mesh: meshes.add(Torus::default()),
-            material: materials.add(StandardMaterial::from(Color::WHITE)),
-            ..default()
-        },
+        Mesh3d(meshes.add(Torus::default())),
+        MeshMaterial3d(materials.add(StandardMaterial::from(Color::WHITE))),
+        Transform::from_xyz(spacing_offset, height_offset, -depth_offset),
         Grid {
             color: Color::Srgba(tailwind::BLUE_500),
             ..default()
@@ -81,16 +73,15 @@ fn spawn_demonstration_objects(
     ));
     // Moving grid, cyan
     commands
-        .spawn(PbrBundle {
-            mesh: meshes.add(Cuboid::default()),
-            material: materials.add(StandardMaterial::from(Color::WHITE)),
-            transform: Transform::from_xyz(-spacing_offset, height_offset, depth_offset),
-            ..default()
-        })
+        .spawn((
+            Mesh3d(meshes.add(Cuboid::default())),
+            MeshMaterial3d(materials.add(StandardMaterial::from(Color::WHITE))),
+            Transform::from_xyz(-spacing_offset, height_offset, depth_offset),
+        ))
         .with_children(|child| {
             child.spawn((
-                TransformBundle::default(),
-                VisibilityBundle::default(),
+                Transform::default(),
+                Visibility::default(),
                 Grid {
                     color: Color::Srgba(tailwind::CYAN_500),
                     ..default()
@@ -100,16 +91,15 @@ fn spawn_demonstration_objects(
         });
     // Spinning grid, magenta
     commands
-        .spawn(PbrBundle {
-            mesh: meshes.add(Capsule3d::default()),
-            material: materials.add(StandardMaterial::from(Color::WHITE)),
-            transform: Transform::from_xyz(0.0_f32, height_offset, depth_offset),
-            ..default()
-        })
+        .spawn((
+            Mesh3d(meshes.add(Capsule3d::default())),
+            MeshMaterial3d(materials.add(StandardMaterial::from(Color::WHITE))),
+            Transform::from_xyz(0.0_f32, height_offset, depth_offset),
+        ))
         .with_children(|child| {
             child.spawn((
-                TransformBundle::default(),
-                VisibilityBundle::default(),
+                Transform::default(),
+                Visibility::default(),
                 Grid {
                     color: Color::Srgba(tailwind::VIOLET_500),
                     ..default()
@@ -119,16 +109,15 @@ fn spawn_demonstration_objects(
         });
     // Moving and spinning grid, yellow
     commands
-        .spawn(PbrBundle {
-            mesh: meshes.add(Torus::default()),
-            material: materials.add(StandardMaterial::from(Color::WHITE)),
-            transform: Transform::from_xyz(spacing_offset, height_offset, depth_offset),
-            ..default()
-        })
+        .spawn((
+            Mesh3d(meshes.add(Torus::default())),
+            MeshMaterial3d(materials.add(StandardMaterial::from(Color::WHITE))),
+            Transform::from_xyz(spacing_offset, height_offset, depth_offset),
+        ))
         .with_children(|child| {
             child.spawn((
-                TransformBundle::default(),
-                VisibilityBundle::default(),
+                Transform::default(),
+                Visibility::default(),
                 Grid {
                     color: Color::Srgba(tailwind::YELLOW_500),
                     ..default()
@@ -139,10 +128,10 @@ fn spawn_demonstration_objects(
         });
 
     // Point light
-    commands.spawn(PointLightBundle {
-        transform: Transform::from_xyz(4.0_f32, 4.0_f32, 4.0_f32),
-        ..default()
-    });
+    commands.spawn((
+        PointLight::default(),
+        Transform::from_xyz(4.0_f32, 4.0_f32, 4.0_f32),
+    ));
 }
 
 fn move_objects(mut query: Query<(&mut Transform, &Moving)>, time: Res<Time>) {
