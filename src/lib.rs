@@ -1,4 +1,4 @@
-use bevy::{prelude::*, color::palettes::tailwind};
+use bevy::{color::palettes::tailwind, prelude::*};
 
 mod plugin;
 pub mod rendering;
