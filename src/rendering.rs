@@ -1,3 +1,5 @@
+#[allow(unused_imports)]
+
 use bevy::{
     asset::{Asset, Handle},
     pbr::{MaterialPipeline, MaterialPipelineKey},
@@ -96,6 +98,7 @@ impl Material for ClippedLineMaterial {
         self.alpha_mode
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     fn specialize(
         _pipeline: &MaterialPipeline<Self>,
         descriptor: &mut RenderPipelineDescriptor,
@@ -147,6 +150,7 @@ impl Material for SimpleLineMaterial {
         self.alpha_mode
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     fn specialize(
         _pipeline: &MaterialPipeline<Self>,
         descriptor: &mut RenderPipelineDescriptor,
