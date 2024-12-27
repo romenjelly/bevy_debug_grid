@@ -162,31 +162,38 @@ pub fn main_grid_mesher_tracked(
             }
         });
 
-        // Tracked axis line stays at origin
+        // Tracked axis line stays at origin, but inherits visibility through a parent entity
         if let Some(color) = axis.and_then(|axis| axis.get_by_alignment(&tracked.alignment)) {
             let vertices = GridAxis::create_single_axis(size, tracked.alignment).to_vec();
             let mut axis_mesh = Mesh::new(PrimitiveTopology::LineList, RenderAssetUsages::all());
             axis_mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
 
-            let mut axis_entity = commands.spawn((
-                GridChild,
-                Mesh3d(meshes.add(axis_mesh)),
-                NotShadowCaster,
-                Transform::default(),
-                GlobalTransform::default(),
-                Visibility::default(),
-                MeshMaterial3d(clipped_materials.add(ClippedLineMaterial::new(
-                    color,
-                    grid.alpha_mode,
-                    tracked.alignment,
-                    size - grid.spacing,
-                    tracked.offset,
-                    None,
-                ))),
-            ));
-            if let Some(render_layers) = render_layers {
-                axis_entity.insert(render_layers.clone());
-            }
+            // Create a parent entity that only handles visibility inheritance
+            commands.entity(entity).with_children(|children| {
+                children
+                    .spawn((GridChild, GlobalTransform::default(), Visibility::default()))
+                    .with_children(|axis_parent| {
+                        let mut axis_commands = axis_parent.spawn((
+                            GridChild,
+                            Mesh3d(meshes.add(axis_mesh)),
+                            NotShadowCaster,
+                            Transform::default(),
+                            GlobalTransform::default(),
+                            Visibility::default(),
+                            MeshMaterial3d(clipped_materials.add(ClippedLineMaterial::new(
+                                color,
+                                grid.alpha_mode,
+                                tracked.alignment,
+                                size - grid.spacing,
+                                tracked.offset,
+                                None,
+                            ))),
+                        ));
+                        if let Some(render_layers) = render_layers {
+                            axis_commands.insert(render_layers.clone());
+                        }
+                    });
+            });
         }
     }
 }
