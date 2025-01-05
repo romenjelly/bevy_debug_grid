@@ -87,11 +87,14 @@ pub fn main_grid_mesher_untracked(
         commands.entity(entity).with_children(|children| {
             let mut commands = children.spawn((
                 GridChild,
-                meshes.add(mesh),
+                Mesh3d(meshes.add(mesh)),
                 NotShadowCaster,
-                TransformBundle::default(),
-                VisibilityBundle::default(),
-                simple_materials.add(SimpleLineMaterial::from_color(grid.color, grid.alpha_mode)),
+                Transform::default(),
+                Visibility::default(),
+                MeshMaterial3d(
+                    simple_materials
+                        .add(SimpleLineMaterial::from_color(grid.color, grid.alpha_mode)),
+                ),
             ));
             if let Some(render_layers) = render_layers {
                 commands.insert(render_layers.clone());
@@ -137,50 +140,61 @@ pub fn main_grid_mesher_tracked(
         if let Some(children) = children {
             despawn_children_of_type(&mut commands, entity, children, &query_children);
         }
+        // Main grid lines move with the grid
         commands.entity(entity).with_children(|children| {
             let mut commands = children.spawn((
                 GridChild,
-                meshes.add(mesh),
+                Mesh3d(meshes.add(mesh)),
                 NotShadowCaster,
-                TransformBundle::default(),
-                VisibilityBundle::default(),
-                clipped_materials.add(ClippedLineMaterial::new(
+                Transform::default(),
+                Visibility::default(),
+                MeshMaterial3d(clipped_materials.add(ClippedLineMaterial::new(
                     grid.color,
                     grid.alpha_mode,
                     tracked.alignment,
                     size - grid.spacing,
                     tracked.offset,
                     axis,
-                )),
+                ))),
             ));
             if let Some(render_layers) = render_layers {
                 commands.insert(render_layers.clone());
             }
-            if let Some(color) = axis.and_then(|axis| axis.get_by_alignment(&tracked.alignment)) {
-                let vertices = GridAxis::create_single_axis(size, tracked.alignment).to_vec();
-                let mut axis_mesh =
-                    Mesh::new(PrimitiveTopology::LineList, RenderAssetUsages::all());
-                axis_mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
-                let mut commands = children.spawn((
-                    GridChild,
-                    meshes.add(axis_mesh),
-                    NotShadowCaster,
-                    GlobalTransform::default(),
-                    VisibilityBundle::default(),
-                    clipped_materials.add(ClippedLineMaterial::new(
-                        color,
-                        grid.alpha_mode,
-                        tracked.alignment,
-                        size - grid.spacing,
-                        tracked.offset,
-                        None,
-                    )),
-                ));
-                if let Some(render_layers) = render_layers {
-                    commands.insert(render_layers.clone());
-                }
-            }
         });
+
+        // Tracked axis line stays at origin, but inherits visibility through a parent entity
+        if let Some(color) = axis.and_then(|axis| axis.get_by_alignment(&tracked.alignment)) {
+            let vertices = GridAxis::create_single_axis(size, tracked.alignment).to_vec();
+            let mut axis_mesh = Mesh::new(PrimitiveTopology::LineList, RenderAssetUsages::all());
+            axis_mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
+
+            // Create a parent entity that only handles visibility inheritance
+            commands.entity(entity).with_children(|children| {
+                children
+                    .spawn((GridChild, GlobalTransform::default(), Visibility::default()))
+                    .with_children(|axis_parent| {
+                        let mut axis_commands = axis_parent.spawn((
+                            GridChild,
+                            Mesh3d(meshes.add(axis_mesh)),
+                            NotShadowCaster,
+                            Transform::default(),
+                            GlobalTransform::default(),
+                            Visibility::default(),
+                            MeshMaterial3d(clipped_materials.add(ClippedLineMaterial::new(
+                                color,
+                                grid.alpha_mode,
+                                tracked.alignment,
+                                size - grid.spacing,
+                                tracked.offset,
+                                None,
+                            ))),
+                        ));
+                        if let Some(render_layers) = render_layers {
+                            axis_commands.insert(render_layers.clone());
+                        }
+                    });
+            });
+        }
     }
 }
 
@@ -232,26 +246,28 @@ pub fn sub_grid_mesher(
         commands.entity(entity).with_children(|children| {
             let mut child_commands = children.spawn((
                 SubGridChild,
-                meshes.add(mesh),
+                Mesh3d(meshes.add(mesh)),
                 NotShadowCaster,
-                TransformBundle::from_transform(Transform::from_translation(
+                Transform::from_translation(
                     alignment.shift_vec3(-Vec3::Y * SUB_GRID_VERTICAL_OFFSET),
-                )),
-                VisibilityBundle::default(),
+                ),
+                Visibility::default(),
             ));
             if let Some(tracked) = tracked {
-                child_commands.insert(clipped_materials.add(ClippedLineMaterial::new(
-                    sub_grid.color,
-                    grid.alpha_mode,
-                    tracked.alignment,
-                    size - grid.spacing,
-                    tracked.offset,
-                    None,
+                child_commands.insert(MeshMaterial3d(clipped_materials.add(
+                    ClippedLineMaterial::new(
+                        sub_grid.color,
+                        grid.alpha_mode,
+                        tracked.alignment,
+                        size - grid.spacing,
+                        tracked.offset,
+                        None,
+                    ),
                 )));
             } else {
-                child_commands.insert(
-                    simple_materials.add(SimpleLineMaterial::from_color(sub_grid.color, grid.alpha_mode)),
-                );
+                child_commands.insert(MeshMaterial3d(simple_materials.add(
+                    SimpleLineMaterial::from_color(sub_grid.color, grid.alpha_mode),
+                )));
             }
             if let Some(render_layers) = render_layers {
                 child_commands.insert(render_layers.clone());
@@ -299,11 +315,14 @@ pub fn grid_axis_mesher(
                     );
                     let mut commands = children.spawn((
                         GridAxisChild,
-                        meshes.add(mesh),
+                        Mesh3d(meshes.add(mesh)),
                         NotShadowCaster,
-                        TransformBundle::default(),
-                        VisibilityBundle::default(),
-                        simple_materials.add(SimpleLineMaterial::from_color(color, grid.alpha_mode)),
+                        Transform::default(),
+                        Visibility::default(),
+                        MeshMaterial3d(
+                            simple_materials
+                                .add(SimpleLineMaterial::from_color(color, grid.alpha_mode)),
+                        ),
                     ));
                     if let Some(render_layers) = render_layers {
                         commands.insert(render_layers.clone());
@@ -322,11 +341,14 @@ pub fn grid_axis_mesher(
                 mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, vertices);
                 let mut commands = children.spawn((
                     GridAxisChild,
-                    meshes.add(mesh),
+                    Mesh3d(meshes.add(mesh)),
                     NotShadowCaster,
-                    TransformBundle::default(),
-                    VisibilityBundle::default(),
-                    simple_materials.add(SimpleLineMaterial::from_color(grid.color, grid.alpha_mode)),
+                    Transform::default(),
+                    Visibility::default(),
+                    MeshMaterial3d(
+                        simple_materials
+                            .add(SimpleLineMaterial::from_color(grid.color, grid.alpha_mode)),
+                    ),
                 ));
                 if let Some(render_layers) = render_layers {
                     commands.insert(render_layers.clone());

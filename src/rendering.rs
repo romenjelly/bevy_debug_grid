@@ -1,15 +1,17 @@
+#[allow(unused_imports)]
+
 use bevy::{
-    prelude::*,
-    reflect::TypePath,
+    asset::{Asset, Handle},
     pbr::{MaterialPipeline, MaterialPipelineKey},
+    prelude::*,
     render::{
-        texture::GpuImage,
         mesh::MeshVertexBufferLayoutRef,
         render_asset::RenderAssets,
         render_resource::{
             AsBindGroup, AsBindGroupShaderType, PolygonMode, RenderPipelineDescriptor, ShaderRef,
             ShaderType, SpecializedMeshPipelineError,
         },
+        texture::GpuImage,
     },
 };
 
@@ -96,6 +98,7 @@ impl Material for ClippedLineMaterial {
         self.alpha_mode
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     fn specialize(
         _pipeline: &MaterialPipeline<Self>,
         descriptor: &mut RenderPipelineDescriptor,
@@ -147,6 +150,7 @@ impl Material for SimpleLineMaterial {
         self.alpha_mode
     }
 
+    #[cfg(not(target_arch = "wasm32"))]
     fn specialize(
         _pipeline: &MaterialPipeline<Self>,
         descriptor: &mut RenderPipelineDescriptor,

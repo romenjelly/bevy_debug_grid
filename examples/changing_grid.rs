@@ -28,10 +28,8 @@ fn main() {
 
 pub fn spawn_camera(mut commands: Commands) {
     commands.spawn((
-        Camera3dBundle {
-            transform: Transform::from_xyz(-4.0_f32, 12.0_f32, 12.0_f32).looking_at(Vec3::ZERO, Vec3::Y),
-            ..default()
-        },
+        Camera3d::default(),
+        Transform::from_xyz(-4.0_f32, 12.0_f32, 12.0_f32).looking_at(Vec3::ZERO, Vec3::Y),
         Spectator,
     ));
 }
@@ -45,11 +43,8 @@ fn spawn_demonstration_objects(mut commands: Commands) {
 
     // Changing count, red
     commands.spawn((
-        TransformBundle {
-            local: Transform::from_xyz(-spacing, height_offset, -depth_offset),
-            ..default()
-        },
-        VisibilityBundle::default(),
+        Transform::from_xyz(-spacing, height_offset, -depth_offset),
+        Visibility::default(),
         Grid {
             color: Color::Srgba(tailwind::RED_500),
             ..default()
@@ -59,11 +54,8 @@ fn spawn_demonstration_objects(mut commands: Commands) {
     ));
     // Changing spacing, green
     commands.spawn((
-        TransformBundle {
-            local: Transform::from_xyz(0.0_f32, height_offset, -depth_offset),
-            ..default()
-        },
-        VisibilityBundle::default(),
+        Transform::from_xyz(0.0_f32, height_offset, -depth_offset),
+        Visibility::default(),
         Grid {
             color: Color::Srgba(tailwind::GREEN_500),
             ..default()
@@ -76,11 +68,8 @@ fn spawn_demonstration_objects(mut commands: Commands) {
     ));
     // Changing count and spacing, blue
     commands.spawn((
-        TransformBundle {
-            local: Transform::from_xyz(spacing, height_offset, -depth_offset),
-            ..default()
-        },
-        VisibilityBundle::default(),
+        Transform::from_xyz(spacing, height_offset, -depth_offset),
+        Visibility::default(),
         Grid {
             color: Color::Srgba(tailwind::BLUE_500),
             ..default()
@@ -94,11 +83,8 @@ fn spawn_demonstration_objects(mut commands: Commands) {
     ));
     // Changing sub-count, cyan and magenta
     commands.spawn((
-        TransformBundle {
-            local: Transform::from_xyz(-spacing, height_offset, depth_offset),
-            ..default()
-        },
-        VisibilityBundle::default(),
+        Transform::from_xyz(-spacing, height_offset, depth_offset),
+        Visibility::default(),
         Grid {
             color: Color::Srgba(tailwind::CYAN_500),
             ..default()
@@ -112,11 +98,8 @@ fn spawn_demonstration_objects(mut commands: Commands) {
     ));
     // Changing color
     commands.spawn((
-        TransformBundle {
-            local: Transform::from_xyz(0.0_f32, height_offset, depth_offset),
-            ..default()
-        },
-        VisibilityBundle::default(),
+        Transform::from_xyz(0.0_f32, height_offset, depth_offset),
+        Visibility::default(),
         Grid {
             color: Color::WHITE,
             ..default()
@@ -126,11 +109,8 @@ fn spawn_demonstration_objects(mut commands: Commands) {
     ));
     // Changing sub-color, yellow
     commands.spawn((
-        TransformBundle {
-            local: Transform::from_xyz(spacing, height_offset, depth_offset),
-            ..default()
-        },
-        VisibilityBundle::default(),
+        Transform::from_xyz(spacing, height_offset, depth_offset),
+        Visibility::default(),
         Grid {
             color: Color::Srgba(tailwind::YELLOW_500),
             ..default()

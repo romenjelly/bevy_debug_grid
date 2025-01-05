@@ -33,11 +33,12 @@ fn spawn_center_sphere(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(Sphere::default()),
-        material: materials.add(StandardMaterial::from(Color::WHITE)),
-        ..default()
-    });
+    commands.spawn((
+        Mesh3d(meshes.add(Sphere::default())),
+        MeshMaterial3d(materials.add(StandardMaterial::from(Color::WHITE))),
+        Transform::default(),
+        Visibility::default(),
+    ));
 }
 
 fn spawn_floor_grid(mut commands: Commands) {
@@ -57,20 +58,20 @@ fn spawn_floor_grid(mut commands: Commands) {
             alignment: GridAlignment::X,
             ..default()
         },
-        TransformBundle::default(),
-        VisibilityBundle::default(),
+        Transform::default(),
+        Visibility::default(),
     ));
 
     // Point light
-    commands.spawn(PointLightBundle {
-        transform: Transform::from_xyz(4.0_f32, 4.0_f32, 4.0_f32),
-        ..default()
-    });
+    commands.spawn((
+        PointLight::default(),
+        Transform::from_xyz(4.0_f32, 4.0_f32, 4.0_f32),
+    ));
 }
 
 fn move_floor_grid(mut query: Query<&mut TrackedGrid>, time: Res<Time>) {
     for mut grid in query.iter_mut() {
-        grid.offset = time.elapsed_seconds().sin();
+        grid.offset = time.elapsed_secs().sin();
     }
 }
 
@@ -80,7 +81,7 @@ fn lerp_color(lhs: Srgba, rhs: Srgba, factor: f32) -> Color {
 }
 
 fn change_axis_color(mut query: Query<&mut GridAxis, With<TrackedGrid>>, time: Res<Time>) {
-    let factor = ((time.elapsed_seconds()).cos() + 1.0_f32) * 0.5_f32;
+    let factor = ((time.elapsed_secs()).cos() + 1.0_f32) * 0.5_f32;
     for mut axis in query.iter_mut() {
         axis.x = Some(lerp_color(COLOR_X_START, COLOR_X_END, factor));
         axis.y = Some(lerp_color(COLOR_Y_START, COLOR_Y_END, factor));
