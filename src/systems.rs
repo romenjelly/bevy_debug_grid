@@ -364,7 +364,7 @@ pub fn tracked_grid_updater<T: Component>(
     mut floor_grid_query: Query<(&mut Transform, &Grid, &TrackedGrid)>,
     tracked_transform_query: Query<&GlobalTransform, (With<T>, Without<TrackedGrid>)>,
 ) {
-    let Ok(tracked_transform) = tracked_transform_query.get_single() else {
+    let Ok(tracked_transform) = tracked_transform_query.single() else {
         return;
     };
     for (mut grid_transform, grid, tracked) in floor_grid_query.iter_mut() {
