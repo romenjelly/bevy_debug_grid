@@ -1,11 +1,11 @@
 #![allow(clippy::type_complexity)]
 
 use bevy::pbr::NotShadowCaster;
+use bevy::platform::collections::HashMap;
 use bevy::prelude::*;
 use bevy::render::render_asset::RenderAssetUsages;
 use bevy::render::render_resource::PrimitiveTopology;
 use bevy::render::view::RenderLayers;
-use bevy::utils::HashMap;
 
 use crate::*;
 
@@ -401,16 +401,16 @@ pub fn custom_tracked_grid_updater(
 /// Despawns children with a marker component upon the removal of their parent
 pub fn despawn_children_upon_removal<RemovedParent: Component, ChildMarker: Component>(
     mut removed: RemovedComponents<RemovedParent>,
-    query: Query<(&Parent, Entity), With<ChildMarker>>,
+    query: Query<(&ChildOf, Entity), With<ChildMarker>>,
     mut commands: Commands,
 ) {
     if removed.is_empty() {
         return;
     }
     let mut parent_to_child_map: HashMap<Entity, Vec<Entity>> = HashMap::new();
-    for (parent, child) in query.iter() {
+    for (child_of, child) in query.iter() {
         parent_to_child_map
-            .entry(parent.get())
+            .entry(child_of.parent())
             .and_modify(|children| children.push(child))
             .or_insert_with(|| vec![child]);
     }
