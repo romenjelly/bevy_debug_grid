@@ -17,7 +17,7 @@ bevy = { version = "0.16", default-features = false, features = [
 
 [dev-dependencies]
 bevy = "0.16"
-bevy_spectator = "0.7.0"
+bevy_spectator = "0.8.0"
 
 [[example]]
 name = "default_cube"
