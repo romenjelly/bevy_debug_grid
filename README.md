@@ -13,7 +13,7 @@ To install this plugin, add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_debug_grid = "0.6"
+bevy_debug_grid = "0.7"
 ```
 
 ## Setup
