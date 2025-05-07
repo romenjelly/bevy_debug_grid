@@ -1,5 +1,5 @@
+use bevy::asset::weak_handle;
 #[allow(unused_imports)]
-
 use bevy::{
     asset::{Asset, Handle},
     pbr::{MaterialPipeline, MaterialPipelineKey},
@@ -16,7 +16,8 @@ use bevy::{
 };
 
 /// Handle for the clipped line shader
-pub const CLIPPED_LINE_SHADER_HANDLE: Handle<Shader> = Handle::weak_from_u128(14735426461149675473);
+pub const CLIPPED_LINE_SHADER_HANDLE: Handle<Shader> =
+    weak_handle!("66CF2528-BE11-4875-9A37-218FB089E67D");
 
 use crate::{GridAlignment, GridAxis};
 
@@ -111,7 +112,8 @@ impl Material for ClippedLineMaterial {
 }
 
 /// Handle for the simple line shader
-pub const SIMPLE_LINE_SHADER_HANDLE: Handle<Shader> = Handle::weak_from_u128(14181856097290587572);
+pub const SIMPLE_LINE_SHADER_HANDLE: Handle<Shader> =
+    weak_handle!("3E41FD75-3AEA-4B8A-B2CE-6AE5A32973F4");
 
 /// Simple line material with no functionality beyond assigning a color
 #[derive(Default, Asset, AsBindGroup, TypePath, Debug, Clone)]
