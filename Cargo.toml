@@ -1,9 +1,9 @@
 [package]
 name = "bevy_debug_grid"
 description = "A bevy plugin for creating grids, for debugging purposes"
-version = "0.7.0"
+version = "0.8.0"
 repository = "https://github.com/romenjelly/bevy_debug_grid"
-edition = "2021"
+edition = "2024"
 license = "MIT OR Apache-2.0"
 keywords = ["bevy"]
 exclude = ["/examples/", "/assets/"]
