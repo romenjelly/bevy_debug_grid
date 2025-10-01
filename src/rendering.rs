@@ -1,14 +1,16 @@
-use bevy::asset::weak_handle;
+use bevy::asset::uuid_handle;
+#[cfg(not(target_arch = "wasm32"))]
 #[allow(unused_imports)]
 use bevy::{
     asset::{Asset, Handle},
     pbr::{MaterialPipeline, MaterialPipelineKey},
     prelude::*,
+    mesh::MeshVertexBufferLayoutRef,
+    shader::ShaderRef,
     render::{
-        mesh::MeshVertexBufferLayoutRef,
         render_asset::RenderAssets,
         render_resource::{
-            AsBindGroup, AsBindGroupShaderType, PolygonMode, RenderPipelineDescriptor, ShaderRef,
+            AsBindGroup, AsBindGroupShaderType, PolygonMode, RenderPipelineDescriptor,
             ShaderType, SpecializedMeshPipelineError,
         },
         texture::GpuImage,
@@ -17,7 +19,7 @@ use bevy::{
 
 /// Handle for the clipped line shader
 pub const CLIPPED_LINE_SHADER_HANDLE: Handle<Shader> =
-    weak_handle!("66CF2528-BE11-4875-9A37-218FB089E67D");
+    uuid_handle!("66CF2528-BE11-4875-9A37-218FB089E67D");
 
 use crate::{GridAlignment, GridAxis};
 
@@ -101,7 +103,7 @@ impl Material for ClippedLineMaterial {
 
     #[cfg(not(target_arch = "wasm32"))]
     fn specialize(
-        _pipeline: &MaterialPipeline<Self>,
+        _pipeline: &MaterialPipeline,
         descriptor: &mut RenderPipelineDescriptor,
         _layout: &MeshVertexBufferLayoutRef,
         _key: MaterialPipelineKey<Self>,
@@ -113,7 +115,7 @@ impl Material for ClippedLineMaterial {
 
 /// Handle for the simple line shader
 pub const SIMPLE_LINE_SHADER_HANDLE: Handle<Shader> =
-    weak_handle!("3E41FD75-3AEA-4B8A-B2CE-6AE5A32973F4");
+    uuid_handle!("3E41FD75-3AEA-4B8A-B2CE-6AE5A32973F4");
 
 /// Simple line material with no functionality beyond assigning a color
 #[derive(Default, Asset, AsBindGroup, TypePath, Debug, Clone)]
@@ -154,7 +156,7 @@ impl Material for SimpleLineMaterial {
 
     #[cfg(not(target_arch = "wasm32"))]
     fn specialize(
-        _pipeline: &MaterialPipeline<Self>,
+        _pipeline: &MaterialPipeline,
         descriptor: &mut RenderPipelineDescriptor,
         _layout: &MeshVertexBufferLayoutRef,
         _key: MaterialPipelineKey<Self>,

@@ -1,11 +1,11 @@
 #![allow(clippy::type_complexity)]
 
-use bevy::pbr::NotShadowCaster;
+use bevy::light::NotShadowCaster;
 use bevy::platform::collections::HashMap;
 use bevy::prelude::*;
-use bevy::render::render_asset::RenderAssetUsages;
+use bevy::asset::RenderAssetUsages;
 use bevy::render::render_resource::PrimitiveTopology;
-use bevy::render::view::RenderLayers;
+use bevy::camera::visibility::RenderLayers;
 
 use crate::*;
 

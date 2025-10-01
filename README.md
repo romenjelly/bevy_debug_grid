@@ -249,6 +249,7 @@ Adding a `RenderLayers` component to an entity with a `Grid` will ensure that al
 
 | Bevy Version | Plugin Version |
 |:------------:|:--------------:|
+|    `0.17`    |  `0.8`         |
 |    `0.16`    |  `0.7`         |
 |    `0.15`    |  git `bc7f88e` |
 |    `0.14`    |  `0.6`         |
