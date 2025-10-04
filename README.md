@@ -18,12 +18,12 @@ bevy_debug_grid = "0.7"
 
 ## Setup
 
-To use the plugin, import it: `use bevy_debug_grid::*;`  
+To use the plugin, import the prelude: `use bevy_debug_grid::prelude::*;`  
 Then add the provided `DebugGridPlugin` plugin to your app.
 
 ```rs
 use bevy::prelude::*;
-use bevy_debug_grid::*;
+use bevy_debug_grid::prelude::*;
 
 fn main() {
     App::new()

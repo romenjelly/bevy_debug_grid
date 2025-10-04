@@ -8,6 +8,17 @@ pub use plugin::*;
 use rendering::*;
 use systems::*;
 
+pub mod prelude {
+    pub use crate::plugin::*;
+    pub use super::{
+        Grid,
+        SubGrid,
+        GridAlignment,
+        GridAxis,
+        TrackedGrid,
+    };
+}
+
 /// The main grid component
 #[derive(Component, Clone, Debug)]
 pub struct Grid {
