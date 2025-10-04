@@ -1,18 +1,20 @@
 use bevy::{prelude::*, color::palettes::tailwind};
 use bevy_debug_grid::*;
-use bevy_spectator::*;
 use std::f32;
 
-#[allow(dead_code)]
+mod default_cube;
 
 fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins,
-            SpectatorPlugin,
+            default_cube::CameraControllerPlugin::from_positions(
+                Vec3::new(-4.0_f32, 12.0_f32, 12.0_f32),
+                Vec3::ZERO,
+            ),
             DebugGridPlugin::with_floor_grid(),
         ))
-        .add_systems(Startup, (spawn_camera, spawn_demonstration_objects))
+        .add_systems(Startup, spawn_demonstration_objects)
         .add_systems(
             Update,
             (
@@ -25,15 +27,6 @@ fn main() {
         )
         .run();
 }
-
-pub fn spawn_camera(mut commands: Commands) {
-    commands.spawn((
-        Camera3d::default(),
-        Transform::from_xyz(-4.0_f32, 12.0_f32, 12.0_f32).looking_at(Vec3::ZERO, Vec3::Y),
-        Spectator,
-    ));
-}
-
 
 fn spawn_demonstration_objects(mut commands: Commands) {
     let period = 4.0_f32;

@@ -1,18 +1,20 @@
 use bevy::{prelude::*, color::palettes::tailwind};
 use bevy_debug_grid::*;
-use bevy_spectator::*;
 use std::f32;
 
-mod changing_grid;
+mod default_cube;
 
 fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins,
-            SpectatorPlugin,
+            default_cube::CameraControllerPlugin::from_positions(
+                Vec3::new(-4.0_f32, 12.0_f32, 12.0_f32),
+                Vec3::ZERO,
+            ),
             DebugGridPlugin::with_floor_grid(),
         ))
-        .add_systems(Startup, (changing_grid::spawn_camera, spawn_demonstration_objects))
+        .add_systems(Startup, spawn_demonstration_objects)
         .add_systems(Update, (move_objects, spin_objects))
         .run();
 }

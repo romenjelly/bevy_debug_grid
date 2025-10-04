@@ -1,6 +1,5 @@
 use bevy::{prelude::*, color::palettes::tailwind};
 use bevy_debug_grid::*;
-use bevy_spectator::*;
 
 mod default_cube;
 
@@ -17,12 +16,12 @@ fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins,
-            SpectatorPlugin,
+            default_cube::CameraControllerPlugin::default(),
             DebugGridPlugin::without_floor_grid(),
         ))
         .add_systems(
             Startup,
-            (spawn_floor_grid, default_cube::spawn_camera, spawn_center_sphere),
+            (spawn_floor_grid, spawn_center_sphere),
         )
         .add_systems(Update, (move_floor_grid, change_axis_color))
         .run();

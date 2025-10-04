@@ -1,18 +1,15 @@
 use bevy::{
     prelude::*,
+    camera::{visibility::{Layer, RenderLayers}, RenderTarget},
     color::palettes::tailwind,
-    render::{
-        camera::{ClearColorConfig, RenderTarget},
-        render_resource::{
-            Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
-        },
-        view::{Layer, RenderLayers},
+    render::render_resource::{
+        Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
     },
 };
 use bevy_debug_grid::*;
-use bevy_spectator::*;
 
 mod default_cube;
+use default_cube::*;
 
 /**
  * This example demonstrates the usage of render layers, and custom tracking overrides for grids.
@@ -30,9 +27,9 @@ fn main() {
     App::new()
         .add_plugins((
             DefaultPlugins,
-            SpectatorPlugin,
+            CameraControllerPlugin::without_camera(),
             // Since this world has 3 cameras, we tell the grid plugin to track the entity with the Spectator component
-            TrackedDebugGridPlugin::<Spectator>::with_floor_grid(),
+            TrackedDebugGridPlugin::<ControlledCamera>::with_floor_grid(),
         ))
         .add_systems(Startup, setup)
         .add_systems(Update, floating_object)
@@ -88,7 +85,7 @@ fn setup(
         Camera {
             clear_color: ClearColorConfig::Custom(Color::Srgba(tailwind::GRAY_500)),
             order: -1,
-            target: RenderTarget::Image(top_image_handle.clone()),
+            target: RenderTarget::Image(top_image_handle.clone().into()),
             ..default()
         },
         Transform::from_xyz(0.0_f32, 8.0_f32, 0.0_f32).looking_at(Vec3::ZERO, Vec3::Y),
@@ -117,7 +114,7 @@ fn setup(
             Camera {
                 clear_color: ClearColorConfig::Custom(Color::Srgba(tailwind::GRAY_500)),
                 order: -1,
-                target: RenderTarget::Image(bottom_image_handle.clone()),
+                target: RenderTarget::Image(bottom_image_handle.clone().into()),
                 ..default()
             },
             Transform::from_xyz(-4.0_f32, 2.0_f32, 4.0_f32).looking_at(Vec3::Y, Vec3::Y),
@@ -165,7 +162,7 @@ fn setup(
 
     // Main render pass camera with parented render textures
     commands
-        .spawn(default_cube::camera_bundle())
+        .spawn(camera_bundle(CameraControllerPlugin::default_transform()))
         .with_children(|parent| {
             // Top render texture, looking at a grid
             parent.spawn((
