@@ -69,7 +69,7 @@ impl Default for SubGrid {
 pub struct SubGridChild;
 
 /// The tracking axis for a grid. *Ex:* `GridAlignment::Y` will result in a floor.
-#[derive(Component, Default, Debug, Copy, Clone, PartialEq)]
+#[derive(Component, Default, Debug, Copy, Clone, PartialEq, Eq)]
 pub enum GridAlignment {
     X,
     #[default]
@@ -99,8 +99,6 @@ impl GridAlignment {
         }
     }
 }
-
-impl Eq for GridAlignment {}
 
 impl From<GridAlignment> for Vec3 {
     fn from(val: GridAlignment) -> Self {
