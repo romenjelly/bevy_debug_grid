@@ -1,12 +1,14 @@
 use bevy::prelude::*;
 use bevy_debug_grid::*;
 
+#[allow(unused_imports)]
 pub use camera_controller::{
     CameraControllerPlugin,
     camera_bundle,
     ControlledCamera,
 };
 
+#[allow(dead_code)]
 fn main() {
     App::new()
         .add_plugins((
@@ -54,6 +56,7 @@ pub mod camera_controller {
         pub camera_transform: Option<Transform>,
     }
 
+    #[allow(dead_code)]
     impl CameraControllerPlugin {
         pub const DEFAULT_CAMERA_ORIGIN: Vec3 = Vec3::new(7.0_f32, 3.5_f32, 4.0_f32);
         pub const DEFAULT_CAMERA_LOOK_AT: Vec3 = Vec3::new(0.0_f32, 0.5_f32, 0.0_f32);
