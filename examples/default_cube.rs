@@ -2,11 +2,7 @@ use bevy::prelude::*;
 use bevy_debug_grid::*;
 
 #[allow(unused_imports)]
-pub use camera_controller::{
-    CameraControllerPlugin,
-    camera_bundle,
-    ControlledCamera,
-};
+pub use camera_controller::{camera_bundle, CameraControllerPlugin, ControlledCamera};
 
 #[allow(dead_code)]
 fn main() {
@@ -42,8 +38,8 @@ fn default_cube(
 
 // Camera controller used by every example
 pub mod camera_controller {
-    use bevy::prelude::*;
     use bevy::input::mouse::MouseMotion;
+    use bevy::prelude::*;
     use bevy::window::CursorOptions;
 
     #[derive(Component)]
@@ -60,7 +56,6 @@ pub mod camera_controller {
     impl CameraControllerPlugin {
         pub const DEFAULT_CAMERA_ORIGIN: Vec3 = Vec3::new(7.0_f32, 3.5_f32, 4.0_f32);
         pub const DEFAULT_CAMERA_LOOK_AT: Vec3 = Vec3::new(0.0_f32, 0.5_f32, 0.0_f32);
-
 
         pub fn without_camera() -> Self {
             Self {
@@ -95,20 +90,12 @@ pub mod camera_controller {
             if let Some(camera_transform) = self.camera_transform {
                 app.add_systems(Startup, spawn_camera(camera_transform));
             }
-            app.add_systems(Update, (
-                handle_focus,
-                translate_camera,
-                rotate_camera,
-            ));
+            app.add_systems(Update, (handle_focus, translate_camera, rotate_camera));
         }
     }
 
     pub fn camera_bundle(camera_transform: Transform) -> impl Bundle {
-        (
-            Camera3d::default(),
-            ControlledCamera,
-            camera_transform,
-        )
+        (Camera3d::default(), ControlledCamera, camera_transform)
     }
 
     fn spawn_camera(camera_transform: Transform) -> impl Fn(Commands) {
@@ -152,11 +139,12 @@ pub mod camera_controller {
             8.0_f32
         };
 
-        let mut translation_intent = transform.rotation * Vec3::new(
-            axis_motion_intent(KeyCode::KeyD, KeyCode::KeyA),
-            0.0_f32,
-            axis_motion_intent(KeyCode::KeyS, KeyCode::KeyW),
-        );
+        let mut translation_intent = transform.rotation
+            * Vec3::new(
+                axis_motion_intent(KeyCode::KeyD, KeyCode::KeyA),
+                0.0_f32,
+                axis_motion_intent(KeyCode::KeyS, KeyCode::KeyW),
+            );
         translation_intent.y = 0.0_f32;
         translation_intent = translation_intent.normalize_or_zero();
         translation_intent.y = axis_motion_intent(KeyCode::Space, KeyCode::ControlLeft);

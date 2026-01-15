@@ -1,7 +1,10 @@
 use bevy::{
-    prelude::*,
-    camera::{visibility::{Layer, RenderLayers}, RenderTarget},
+    camera::{
+        visibility::{Layer, RenderLayers},
+        RenderTarget,
+    },
     color::palettes::tailwind,
+    prelude::*,
     render::render_resource::{
         Extent3d, TextureDescriptor, TextureDimension, TextureFormat, TextureUsages,
     },
@@ -85,9 +88,9 @@ fn setup(
         Camera {
             clear_color: ClearColorConfig::Custom(Color::Srgba(tailwind::GRAY_500)),
             order: -1,
-            target: RenderTarget::Image(top_image_handle.clone().into()),
             ..default()
         },
+        RenderTarget::Image(top_image_handle.clone().into()),
         Transform::from_xyz(0.0_f32, 8.0_f32, 0.0_f32).looking_at(Vec3::ZERO, Vec3::Y),
         RenderLayers::layer(TOP_LAYER),
     ));
@@ -114,9 +117,9 @@ fn setup(
             Camera {
                 clear_color: ClearColorConfig::Custom(Color::Srgba(tailwind::GRAY_500)),
                 order: -1,
-                target: RenderTarget::Image(bottom_image_handle.clone().into()),
                 ..default()
             },
+            RenderTarget::Image(bottom_image_handle.clone().into()),
             Transform::from_xyz(-4.0_f32, 2.0_f32, 4.0_f32).looking_at(Vec3::Y, Vec3::Y),
             RenderLayers::layer(BOTTOM_LAYER),
         ))
