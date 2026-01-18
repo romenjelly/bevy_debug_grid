@@ -258,6 +258,10 @@ Adding a `RenderLayers` component to an entity with a `Grid` will ensure that al
 |    `0.11`    |  `0.2.0-0.2.1` |
 |    `0.10`    |  `0.1.0-0.1.1` |
 
+## Contributing
+
+Please check out the [contributing guidelines](CONTRIBUTING.md) if you wish to submit a pull request.
+
 ## License
 
 This plugin is dual-licensed under either:
