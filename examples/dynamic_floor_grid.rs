@@ -1,4 +1,4 @@
-use bevy::{prelude::*, color::palettes::tailwind};
+use bevy::{color::palettes::tailwind, prelude::*};
 use bevy_debug_grid::*;
 
 mod default_cube;
@@ -19,10 +19,7 @@ fn main() {
             default_cube::CameraControllerPlugin::default(),
             DebugGridPlugin::without_floor_grid(),
         ))
-        .add_systems(
-            Startup,
-            (spawn_floor_grid, spawn_center_sphere),
-        )
+        .add_systems(Startup, (spawn_floor_grid, spawn_center_sphere))
         .add_systems(Update, (move_floor_grid, change_axis_color))
         .run();
 }
@@ -75,7 +72,11 @@ fn move_floor_grid(mut query: Query<&mut TrackedGrid>, time: Res<Time>) {
 }
 
 fn lerp_color(lhs: Srgba, rhs: Srgba, factor: f32) -> Color {
-    let subbed = Srgba::rgb(rhs.red - lhs.red, rhs.green - lhs.green, rhs.blue - lhs.blue);
+    let subbed = Srgba::rgb(
+        rhs.red - lhs.red,
+        rhs.green - lhs.green,
+        rhs.blue - lhs.blue,
+    );
     Color::Srgba(lhs + subbed * factor)
 }
 

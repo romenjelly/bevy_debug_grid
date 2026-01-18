@@ -1,4 +1,4 @@
-use bevy::{prelude::*, color::palettes::tailwind};
+use bevy::{color::palettes::tailwind, prelude::*};
 use bevy_debug_grid::*;
 use std::f32;
 

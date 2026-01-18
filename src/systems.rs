@@ -1,11 +1,11 @@
 #![allow(clippy::type_complexity)]
 
+use bevy::asset::RenderAssetUsages;
+use bevy::camera::visibility::RenderLayers;
 use bevy::light::NotShadowCaster;
 use bevy::platform::collections::HashMap;
 use bevy::prelude::*;
-use bevy::asset::RenderAssetUsages;
 use bevy::render::render_resource::PrimitiveTopology;
-use bevy::camera::visibility::RenderLayers;
 
 use crate::*;
 
@@ -27,7 +27,7 @@ fn despawn_children_of_type<T: Component>(
         .into_iter()
         .filter_map(|child| query.get(*child).ok())
         .collect::<Vec<_>>();
-    commands.entity(parent).remove_children(&children);
+    commands.entity(parent).detach_children(&children);
     for child in children {
         commands.entity(child).despawn();
     }
