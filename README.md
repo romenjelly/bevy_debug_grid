@@ -13,7 +13,7 @@ To install this plugin, add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-bevy_debug_grid = "0.7"
+bevy_debug_grid = "0.9"
 ```
 
 ## Setup
@@ -249,6 +249,7 @@ Adding a `RenderLayers` component to an entity with a `Grid` will ensure that al
 
 | Bevy Version | Plugin Version |
 |:------------:|:--------------:|
+|    `0.18`    |  `0.9`         |
 |    `0.17`    |  `0.8`         |
 |    `0.16`    |  `0.7`         |
 |    `0.15`    |  git `bc7f88e` |
