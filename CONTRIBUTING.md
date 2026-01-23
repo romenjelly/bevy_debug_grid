@@ -29,5 +29,8 @@ When contributing an upate, remember to do the following:
 - Check that examples run as expected
   - The compiler cannot catch everything when working with a game engine, some updates may change logic / expected behavior
   - In the case where examples don't behave as expected, engine debug logs are often helpful
+- Check that the project still compiles for WASM (Web Assembly)
+  - Install the `wasm32-unknown-unknown` target by running `rustup target add wasm32-unknown-unknown`
+  - Compile the project with `cargo build --target wasm32-unknown-unknown`
 
 **Thank You!**

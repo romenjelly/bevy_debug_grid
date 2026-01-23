@@ -1,5 +1,4 @@
 use bevy::asset::uuid_handle;
-#[cfg(not(target_arch = "wasm32"))]
 #[allow(unused_imports)]
 use bevy::{
     asset::{Asset, Handle},
